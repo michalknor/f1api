@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentMap;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@RequestMapping("/api")
 public class AddressBookResource {
 
 	ConcurrentMap<String, Contact> contacts = new ConcurrentHashMap<>();
