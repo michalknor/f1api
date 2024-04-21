@@ -8,14 +8,27 @@ import java.net.http.HttpResponse;
 import java.util.AbstractMap;
 import java.util.Map;
 
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+
 public class Scrapper {
 	public static void main(String[] args) {
 		String page = "";
 		Map.Entry<Integer, String> result = getHTMLFromPage(page);
-		if (result.getKey() == 200) {
-			String html = result.getValue();
-			System.out.println(html);
+
+		if (result.getKey() != 200) {
+			return;
 		}
+
+		String html = result.getValue();
+		// System.out.println(html);
+
+		Document f1calendar_root = Jsoup.parse(html);
+		
+		Element f1calendar_calendar = f1calendar_root.select("body > div > main > div > div").first();
+        
+        System.out.println(f1calendar_calendar);
 	}
 
 	public static Map.Entry<Integer, String> getHTMLFromPage(String page) {
