@@ -28,7 +28,7 @@ public class Scrapper {
 		Element f1CalendarCalendar = f1CalendarRoot.select("body > div > main > div > div").first();
 
 		int sectionIndex = 0;
-        Element f1CalendarSection = f1CalendarCalendar.select("div:nth-child(" + (sectionIndex + 2) + ") > section").first();
+		Element f1CalendarSection = f1CalendarCalendar.select("div:nth-child(" + (sectionIndex + 2) + ") > section").first();
 
 		// System.out.println(f1CalendarCalendar);
 		// System.out.println(f1CalendarSection);
