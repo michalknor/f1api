@@ -1,20 +1,32 @@
 package sk.f1api.f1api;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.file.Paths;
 import java.util.AbstractMap;
+import java.util.Enumeration;
 import java.util.Map;
+import java.util.Properties;
 
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.Transaction;
+import org.hibernate.cfg.Configuration;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import sk.f1api.f1api.entities.Country;
+
 public class Scrapper {
+	public static SessionFactory sessionFactory;
 	public static void main(String[] args) {
-		String page = "";
+		String page = getCalendarUrl();
 		Map.Entry<Integer, String> result = getHTMLFromPage(page);
 
 		if (result.getKey() != 200) {
@@ -34,6 +46,9 @@ public class Scrapper {
 		// System.out.println(f1CalendarSection);
 
 		// races = []
+
+		initSessionFactory();
+
 		while (f1CalendarSection != null) {
 			parseRace(f1CalendarSection);
 
@@ -59,12 +74,29 @@ public class Scrapper {
 	}
 
 	public static void parseRace(Element section) {
-		RaceCalendar raceCalendar = new RaceCalendar();
 
-		raceCalendar.countryAbbreviation = getCountryAbbreviation(section.select("div > div > img").first());
-		raceCalendar.index = Integer.parseInt(section.select("div > div > h4").first().text().split(". VC")[0]);
+        Session session = sessionFactory.openSession();
+        Transaction tx = null;
+        try {
+            tx = session.beginTransaction();
+			
+			Country country = new Country();
 
-		System.out.println(raceCalendar.toString());
+			country.setCountryAbbreviation(getCountryAbbreviation(section.select("div > div > img").first()));;
+			// country.index = Integer.parseInt(section.select("div > div > h4").first().text().split(". VC")[0]);
+
+			System.out.println(country.toString());
+
+            session.persist(country);
+            tx.commit();
+        } catch (HibernateException e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
 
 		// for (int i = 1; i < 6; i++) {
 		// 	Element sectionSession = section.select("table > tbody > tr:nth-child(" + i + ")").first();
@@ -119,5 +151,42 @@ public class Scrapper {
 				yield "?";
 			}
 		};
+	}
+
+	public static String getCalendarUrl() {
+		try (FileInputStream input = new FileInputStream(
+                Paths.get("src", "main", "resources", "scrapper.properties").toString())) {
+			Properties dbProperties = new Properties();
+            dbProperties.load(input);
+
+            return dbProperties.getProperty("url.calendar");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+		return "";
+	}
+
+	public static void initSessionFactory() {
+		Configuration configuration = new Configuration().configure("hibernate.cfg.xml");
+
+        Properties dbProperties = new Properties();
+        try (FileInputStream input = new FileInputStream(
+                Paths.get("src", "main", "resources", "database.properties").toString())) {
+            dbProperties.load(input);
+            Enumeration<?> propertyNames = dbProperties.propertyNames();
+            while (propertyNames.hasMoreElements()) {
+                String propertyName = (String) propertyNames.nextElement();
+                String propertyValue = dbProperties.getProperty(propertyName);
+                configuration.setProperty(propertyName, propertyValue);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // Create Hibernate SessionFactory
+        Scrapper.sessionFactory = configuration
+                // .addAnnotatedClass(Test.class)
+                .buildSessionFactory();
 	}
 }
