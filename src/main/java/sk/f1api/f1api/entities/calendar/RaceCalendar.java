@@ -6,28 +6,28 @@ import jakarta.persistence.*;
 public class RaceCalendar {
 
 	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
 	private String countryAbbreviation;
 
-    private int index;
+	private int index;
 
-    public void setCountryAbbreviation(String countryAbbreviation) {
-        this.countryAbbreviation = countryAbbreviation;
-    }
-    
-    public String getCountryAbbreviation() {
-        return this.countryAbbreviation;
-    }
+	public void setCountryAbbreviation(String countryAbbreviation) {
+		this.countryAbbreviation = countryAbbreviation;
+	}
 
-    public void setIndex(int index) {
-        this.index = index;
-    }
-    
-    public int getName() {
-        return this.index;
-    }
+	public String getCountryAbbreviation() {
+		return this.countryAbbreviation;
+	}
+
+	public void setIndex(int index) {
+		this.index = index;
+	}
+	
+	public int getName() {
+		return this.index;
+	}
 
 	@Override
 	public String toString() {
