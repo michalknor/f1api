@@ -6,6 +6,6 @@
         <property name="hibernate.hbm2ddl.auto">update</property>
         <!-- Other Hibernate properties -->
         <mapping class="sk.f1api.f1api.Test"/>
-        <mapping class="sk.f1api.f1api.entities.calendar.RaceCalendar"/>
+        <mapping class="sk.f1api.f1api.entities.Country"/>
     </session-factory>
 </hibernate-configuration>
