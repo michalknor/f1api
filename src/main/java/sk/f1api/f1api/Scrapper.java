@@ -21,7 +21,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
-import sk.f1api.f1api.entities.Country;
+import sk.f1api.f1api.entity.Country;
 
 public class Scrapper {
 	public static SessionFactory sessionFactory;

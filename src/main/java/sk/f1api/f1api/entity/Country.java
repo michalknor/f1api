@@ -1,4 +1,4 @@
-package sk.f1api.f1api.entities;
+package sk.f1api.f1api.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
