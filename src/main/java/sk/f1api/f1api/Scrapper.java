@@ -11,16 +11,21 @@ import java.util.AbstractMap;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.Properties;
+import java.util.List;
 
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
+import org.hibernate.query.Query;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Root;
 import sk.f1api.f1api.entity.Country;
 
 public class Scrapper {
@@ -75,19 +80,32 @@ public class Scrapper {
 
 	public static void parseRace(Element section) {
 
+		String countryAbbreviation = getCountryAbbreviation(section.select("div > div > img").first());
+			
+		Country country = new Country();
+
+		country.setCountryAbbreviation(countryAbbreviation);
+
         Session session = sessionFactory.openSession();
         Transaction tx = null;
         try {
             tx = session.beginTransaction();
-			
-			Country country = new Country();
 
-			country.setCountryAbbreviation(getCountryAbbreviation(section.select("div > div > img").first()));;
-			// country.index = Integer.parseInt(section.select("div > div > h4").first().text().split(". VC")[0]);
+			CriteriaBuilder cb = session.getCriteriaBuilder();
+			CriteriaQuery<Country> criteria = cb.createQuery(Country.class);
+			Root<Country> root = criteria.from(Country.class);
 
-			System.out.println(country.toString());
+			criteria.select(root).where(cb.equal(root.get("countryAbbreviation"), countryAbbreviation));
 
-            session.persist(country);
+			Query<Country> query = session.createQuery(criteria);
+			List<Country> countries = query.getResultList();
+
+			if (countries.size() == 0) {
+				country = new Country();
+				country.setCountryAbbreviation(getCountryAbbreviation(section.select("div > div > img").first()));
+				session.persist(country);
+			}
+
             tx.commit();
         } catch (HibernateException e) {
             if (tx != null) {
