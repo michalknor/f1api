@@ -13,6 +13,6 @@ public class Country {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "country_abbreviation", nullable = false, unique = true)
-	private String countryAbbreviation;
+    @Column(nullable = false, unique = true)
+	private String abbreviation;
 }

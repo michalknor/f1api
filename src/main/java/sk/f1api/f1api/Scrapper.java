@@ -84,7 +84,7 @@ public class Scrapper {
 			
 		Country country = new Country();
 
-		country.setCountryAbbreviation(countryAbbreviation);
+		country.setAbbreviation(countryAbbreviation);
 
         Session session = sessionFactory.openSession();
         Transaction tx = null;
@@ -95,14 +95,14 @@ public class Scrapper {
 			CriteriaQuery<Country> criteria = cb.createQuery(Country.class);
 			Root<Country> root = criteria.from(Country.class);
 
-			criteria.select(root).where(cb.equal(root.get("countryAbbreviation"), countryAbbreviation));
+			criteria.select(root).where(cb.equal(root.get("abbreviation"), countryAbbreviation));
 
 			Query<Country> query = session.createQuery(criteria);
 			List<Country> countries = query.getResultList();
 
 			if (countries.size() == 0) {
 				country = new Country();
-				country.setCountryAbbreviation(getCountryAbbreviation(section.select("div > div > img").first()));
+				country.setAbbreviation(getCountryAbbreviation(section.select("div > div > img").first()));
 				session.persist(country);
 			}
 
