@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-public class Country {
+public class SessionType {
 
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,6 +16,6 @@ public class Country {
     @Column(nullable = false, unique = true, length = 2, columnDefinition="CHAR")
     private String abbreviation;
 
-    @Column(nullable = false, unique = true, length = 30)
+    @Column(nullable = false, unique = true, length = 20)
     private String name;
 }
