@@ -7,11 +7,12 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
+@Table(name = "session_type")
 public class SessionType {
 
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Byte id;
+    private int id;
 
     @Column(nullable = false, unique = true, length = 2, columnDefinition="CHAR")
     private String abbreviation;

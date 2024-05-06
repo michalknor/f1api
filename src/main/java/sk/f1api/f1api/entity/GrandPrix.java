@@ -26,7 +26,7 @@ public class GrandPrix {
     @JoinColumn(name = "circuit_id")
     Circuit circuit;
 
-    @Column(nullable = false, columnDefinition = "TINYINT")
+    @Column(nullable = false)
     private Byte round;
 
     @Column(nullable = false, length = 30)

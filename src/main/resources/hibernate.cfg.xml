@@ -6,6 +6,13 @@
         <property name="hibernate.hbm2ddl.auto">update</property>
         <!-- Other Hibernate properties -->
         <mapping class="sk.f1api.f1api.Test"/>
+        <mapping class="sk.f1api.f1api.entity.Circuit"/>
+        <mapping class="sk.f1api.f1api.entity.City"/>
         <mapping class="sk.f1api.f1api.entity.Country"/>
+        <mapping class="sk.f1api.f1api.entity.GrandPrix"/>
+        <mapping class="sk.f1api.f1api.entity.Season"/>
+        <mapping class="sk.f1api.f1api.entity.Session"/>
+        <mapping class="sk.f1api.f1api.entity.SessionType"/>
+        <mapping class="sk.f1api.f1api.entity.Version"/>
     </session-factory>
 </hibernate-configuration>
