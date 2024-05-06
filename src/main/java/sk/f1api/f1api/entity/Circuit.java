@@ -13,6 +13,10 @@ public class Circuit {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @ManyToOne
+    @JoinColumn(name = "city_id")
+    City city;
+
     @Column(nullable = false, unique = true, length = 50)
     private String name;
 }

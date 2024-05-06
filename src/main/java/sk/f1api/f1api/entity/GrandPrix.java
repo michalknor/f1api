@@ -14,6 +14,18 @@ public class GrandPrix {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @ManyToOne
+    @JoinColumn(name = "version_id")
+    Version version;
+
+    @ManyToOne
+    @JoinColumn(name = "season_id")
+    Season season;
+
+    @ManyToOne
+    @JoinColumn(name = "circuit_id")
+    Circuit circuit;
+
     @Column(nullable = false, columnDefinition = "TINYINT")
     private Byte round;
 

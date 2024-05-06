@@ -13,6 +13,10 @@ public class Season {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @ManyToOne
+    @JoinColumn(name = "version_id")
+    Version version;
+
     @Column(nullable = false, columnDefinition = "SMALLINT")
     private Short year;
 }

@@ -14,8 +14,16 @@ public class Session {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @ManyToOne
+    @JoinColumn(name = "grand_prix_id")
+    GrandPrix grandPrix;
+
+    @ManyToOne
+    @JoinColumn(name = "session_type_id")
+    SessionType sessionType;
+
     @Column(nullable = false)
-    private LocalDateTime round;
+    private Byte round;
 
     @Column(nullable = false, name = "time_from")
     private LocalDateTime timeFrom;

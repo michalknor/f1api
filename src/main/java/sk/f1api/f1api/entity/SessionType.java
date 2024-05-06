@@ -11,7 +11,7 @@ public class SessionType {
 
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+    private Byte id;
 
     @Column(nullable = false, unique = true, length = 2, columnDefinition="CHAR")
     private String abbreviation;
