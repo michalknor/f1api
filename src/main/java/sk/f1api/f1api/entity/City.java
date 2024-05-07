@@ -13,6 +13,10 @@ public class City {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @ManyToOne
+    @JoinColumn(name = "country_id")
+    Country country;
+
     @Column(nullable = false, length = 50)
     private String name;
 }
