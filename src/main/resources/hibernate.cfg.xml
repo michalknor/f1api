@@ -11,8 +11,8 @@
         <mapping class="sk.f1api.f1api.entity.Country"/>
         <mapping class="sk.f1api.f1api.entity.GrandPrix"/>
         <mapping class="sk.f1api.f1api.entity.Season"/>
-        <mapping class="sk.f1api.f1api.entity.Session"/>
-        <mapping class="sk.f1api.f1api.entity.SessionType"/>
+        <mapping class="sk.f1api.f1api.entity.Event"/>
+        <mapping class="sk.f1api.f1api.entity.EventType"/>
         <mapping class="sk.f1api.f1api.entity.Version"/>
     </session-factory>
 </hibernate-configuration>

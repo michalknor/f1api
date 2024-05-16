@@ -17,8 +17,8 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name = "session_type")
-public class SessionType implements Identifiable {
+@Table(name = "event_type")
+public class EventType implements Identifiable {
 
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -30,10 +30,10 @@ public class SessionType implements Identifiable {
     @Column(nullable = false, unique = true, length = 20)
     private String name;
 
-    public SessionType() {
+    public EventType() {
     }
 
-    public SessionType(String abbreviation, String name) {
+    public EventType(String abbreviation, String name) {
         this.abbreviation = abbreviation;
         this.name = name;
     }
@@ -41,12 +41,12 @@ public class SessionType implements Identifiable {
     @Override
     public boolean isDuplicate(Session session) {
         CriteriaBuilder cb = session.getCriteriaBuilder();
-        CriteriaQuery<SessionType> criteria = cb.createQuery(SessionType.class);
-        Root<SessionType> root = criteria.from(SessionType.class);
+        CriteriaQuery<EventType> criteria = cb.createQuery(EventType.class);
+        Root<EventType> root = criteria.from(EventType.class);
 
         criteria.select(root).where(cb.equal(root.get("abbreviation"), abbreviation));
 
-        List<SessionType> sessionTypes = session.createQuery(criteria).getResultList();
+        List<EventType> sessionTypes = session.createQuery(criteria).getResultList();
 
         return sessionTypes.size() == 1;
     }
@@ -57,17 +57,17 @@ public class SessionType implements Identifiable {
         try {
             tx = session.beginTransaction();
 
-			List<SessionType> sessionTypes = new ArrayList<SessionType>() {{
-                add(new SessionType("P1", "Practice 1"));
-                add(new SessionType("P2", "Practice 2"));
-                add(new SessionType("P3", "Practice 3"));
-                add(new SessionType("SQ", "Sprint Qualifying"));
-                add(new SessionType("S", "Sprint"));
-                add(new SessionType("Q", "Qualifying"));
-                add(new SessionType("R", "Race"));
+			List<EventType> sessionTypes = new ArrayList<EventType>() {{
+                add(new EventType("P1", "Practice 1"));
+                add(new EventType("P2", "Practice 2"));
+                add(new EventType("P3", "Practice 3"));
+                add(new EventType("SQ", "Sprint Qualifying"));
+                add(new EventType("S", "Sprint"));
+                add(new EventType("Q", "Qualifying"));
+                add(new EventType("R", "Race"));
             }};
 
-            for (SessionType sessionType : sessionTypes) {
+            for (EventType sessionType : sessionTypes) {
                 if (sessionType.isDuplicate(session)) {
                     continue;
                 }
