@@ -1,4 +1,4 @@
-package sk.f1api.f1api;
+package sk.f1api.f1api.scrapper;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -22,44 +22,65 @@ import org.hibernate.query.Query;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
 import sk.f1api.f1api.entity.Country;
+import sk.f1api.f1api.scrapper.parser.Calendar;
+import sk.f1api.f1api.scrapper.parser.Wiki;
 
 public class Scrapper {
 	public static SessionFactory sessionFactory;
 	public static void main(String[] args) {
-		String page = getCalendarUrl();
-		Map.Entry<Integer, String> result = getHTMLFromPage(page);
+		initSessionFactory();
+
+		Wiki f1Wiki = new Wiki();
+		
+		Calendar f1Calendar = new Calendar();
+
+		int trIndex = 2;
+
+		Element f1Races = f1Wiki.getTable().select("tr:nth-of-type(" + trIndex + ")").first();
+
+		while (f1Races != null) {
+			Element imgElements = f1Races.select("img").first();
+			if (imgElements == null) {
+				break;
+			}
+			System.out.println(imgElements.attr("alt"));
+			Country country = new Country();
+			trIndex++;
+			f1Races = f1Wiki.getTable().select("tr:nth-of-type(" + trIndex + ")").first();
+		}
+
+		// Document f1CalendarRoot = Jsoup.parse(html);
+		
+		// Element f1CalendarCalendar = f1CalendarRoot.select("body > div > main > div > div").first();
+
+		// int sectionIndex = 0;
+		// Element f1CalendarSection = f1CalendarCalendar.select("div:nth-child(" + (sectionIndex + 2) + ") > section").first();
+
+
+		// while (f1CalendarSection != null) {
+		// 	parseRace(f1CalendarSection);
+
+		// 	sectionIndex++;
+		// 	f1CalendarSection = f1CalendarCalendar.select("div:nth-child(" + (sectionIndex + 2) + ") > section").first();
+		// }
+	}
+
+	public static Document getDocument(String url) {
+		Map.Entry<Integer, String> result = getHTMLFromPage(url);
 
 		if (result.getKey() != 200) {
-			return;
+			return null;
 		}
 
 		String html = result.getValue();
 
-		Document f1CalendarRoot = Jsoup.parse(html);
-		
-		Element f1CalendarCalendar = f1CalendarRoot.select("body > div > main > div > div").first();
-
-		int sectionIndex = 0;
-		Element f1CalendarSection = f1CalendarCalendar.select("div:nth-child(" + (sectionIndex + 2) + ") > section").first();
-
-		// System.out.println(f1CalendarCalendar);
-		// System.out.println(f1CalendarSection);
-
-		// races = []
-
-		initSessionFactory();
-
-		while (f1CalendarSection != null) {
-			parseRace(f1CalendarSection);
-
-			sectionIndex++;
-			f1CalendarSection = f1CalendarCalendar.select("div:nth-child(" + (sectionIndex + 2) + ") > section").first();
-		}
+		return Jsoup.parse(html);
 	}
 
 	public static Map.Entry<Integer, String> getHTMLFromPage(String page) {
@@ -79,7 +100,6 @@ public class Scrapper {
 	}
 
 	public static void parseRace(Element section) {
-
 		String countryAbbreviation = getCountryAbbreviation(section.select("div > div > img").first());
 			
 		Country country = new Country();
@@ -171,13 +191,13 @@ public class Scrapper {
 		};
 	}
 
-	public static String getCalendarUrl() {
+	public static String getValueOfKeyFromProperties(String node) {
 		try (FileInputStream input = new FileInputStream(
                 Paths.get("src", "main", "resources", "scrapper.properties").toString())) {
 			Properties dbProperties = new Properties();
             dbProperties.load(input);
 
-            return dbProperties.getProperty("url.calendar");
+            return dbProperties.getProperty(node);
         } catch (IOException e) {
             e.printStackTrace();
         }
