@@ -38,4 +38,9 @@ public class Country implements Identifiable {
 
         return countries.size() == 1;
     }
+
+    @Override
+    public String toString() {
+        return "Country(id='" + id + "', abbreviation='" + abbreviation + "', name='" + name + "''";
+    }
 }

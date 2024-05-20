@@ -40,19 +40,10 @@ public class Scrapper {
 		
 		Calendar f1Calendar = new Calendar();
 
-		int trIndex = 2;
+		List<Country> countries = f1Wiki.fillCountry();
 
-		Element f1Races = f1Wiki.getTable().select("tr:nth-of-type(" + trIndex + ")").first();
-
-		while (f1Races != null) {
-			Element imgElements = f1Races.select("img").first();
-			if (imgElements == null) {
-				break;
-			}
-			System.out.println(imgElements.attr("alt"));
-			Country country = new Country();
-			trIndex++;
-			f1Races = f1Wiki.getTable().select("tr:nth-of-type(" + trIndex + ")").first();
+		for (Country country : countries) {
+			System.out.println(country);
 		}
 
 		// Document f1CalendarRoot = Jsoup.parse(html);
