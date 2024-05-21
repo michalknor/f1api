@@ -3,9 +3,6 @@ package sk.f1api.f1api.scrapper.parser;
 import sk.f1api.f1api.entity.Country;
 import sk.f1api.f1api.scrapper.Scrapper;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.jsoup.nodes.Element;
 
 import lombok.Getter;
@@ -33,7 +30,7 @@ public class Wiki {
                         table:nth-of-type(3) >
                         tbody
                         """).first();
-        // System.out.println(data.html());
+        
         numberOfRaces = 0;
         while (true) {
             try {
@@ -44,21 +41,15 @@ public class Wiki {
         }
     }
 
-    public void fillCountry(List<Country> countries) {
-        int trIndex = 2;
+    public void fillCountry(Country country, int round) {
+		Element f1Races = data.select("tr:nth-of-type(" + (round + 1) + ")").first();
+        Element imgElements = f1Races.select("img").first();
 
-		Element f1Races = data.select("tr:nth-of-type(" + trIndex + ")").first();
+        if (imgElements == null) {
+            return;
+        }
 
-		while (f1Races != null) {
-			Element imgElements = f1Races.select("img").first();
-			if (imgElements == null) {
-				break;
-			}
-            Country country = new Country();
-            country.setName(imgElements.attr("alt"));
-			countries.add(country);
-			trIndex++;
-			f1Races = data.select("tr:nth-of-type(" + trIndex + ")").first();
-		}
+        country.setName(imgElements.attr("alt"));
+        return;
     }
 }

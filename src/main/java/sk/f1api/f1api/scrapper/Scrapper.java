@@ -27,6 +27,8 @@ import org.jsoup.nodes.Element;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
+import sk.f1api.f1api.entity.Circuit;
+import sk.f1api.f1api.entity.City;
 import sk.f1api.f1api.entity.Country;
 import sk.f1api.f1api.entity.GrandPrix;
 import sk.f1api.f1api.entity.Season;
@@ -47,8 +49,6 @@ public class Scrapper {
 
 		List<Country> countries = new ArrayList<>();
 
-		f1Wiki.fillCountry(countries);
-
 		Version version = new Version();
 		Season season = new Season();
 		season.setVersion(version);
@@ -56,8 +56,25 @@ public class Scrapper {
 		
 		List<GrandPrix> grandPrixes = new ArrayList<>();
 
-		for (int i = 0; i < f1Wiki.getNumberOfRaces(); i++) {
-			grandPrixes.add(new GrandPrix());
+		for (int i = 1; i < f1Wiki.getNumberOfRaces() + 1; i++) {
+			GrandPrix grandPrix = new GrandPrix();
+			grandPrix.setSeason(season);
+			grandPrix.setVersion(version);
+			grandPrix.setRound((byte) i);
+
+			Circuit circuit = new Circuit();
+			grandPrix.setCircuit(circuit);
+
+			City city = new City();
+			circuit.setCity(city);
+
+			Country country = new Country();
+			city.setCountry(country);
+			
+			f1Wiki.fillCountry(grandPrix.getCircuit().getCity().getCountry(), i);
+			f1Calendar.fillCountry(grandPrix.getCircuit().getCity().getCountry(), i);
+
+			grandPrixes.add(grandPrix);
 		}
 
 		System.out.println(grandPrixes.size());

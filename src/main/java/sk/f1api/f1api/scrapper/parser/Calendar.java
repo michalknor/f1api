@@ -1,5 +1,6 @@
 package sk.f1api.f1api.scrapper.parser;
 
+import sk.f1api.f1api.entity.Country;
 import sk.f1api.f1api.scrapper.Scrapper;
 
 import org.jsoup.nodes.Element;
@@ -24,8 +25,19 @@ public class Calendar {
                         div >
                         div
                         """).first();
+		
 		String lastRace = data.lastElementChild().select("div > section > div > div > h4").first().html();
 		numberOfRaces = Integer.parseInt(lastRace.substring(0, lastRace.indexOf("."))) - 1;
+    }
+
+	public void fillCountry(Country country, int round) {
+		Element f1Races = data.select("div:nth-of-type(" + (round + 1) + ") > section > div > div > img").first();
+
+		String abbreviation = f1Races.attr("src");
+		int indexFrom = abbreviation.lastIndexOf("/") + 1;
+		abbreviation = abbreviation.substring(indexFrom, indexFrom + 2);
+
+		country.setAbbreviation(abbreviation);
     }
 
 	public static String getAbbreviationForEventName(String eventName) {
