@@ -8,6 +8,7 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.file.Paths;
 import java.util.AbstractMap;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.Properties;
@@ -22,12 +23,14 @@ import org.hibernate.query.Query;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
 import sk.f1api.f1api.entity.Country;
+import sk.f1api.f1api.entity.GrandPrix;
+import sk.f1api.f1api.entity.Season;
+import sk.f1api.f1api.entity.Version;
 import sk.f1api.f1api.scrapper.parser.Calendar;
 import sk.f1api.f1api.scrapper.parser.Wiki;
 
@@ -36,15 +39,29 @@ public class Scrapper {
 	public static void main(String[] args) {
 		initSessionFactory();
 
+		short year = 2024;
+
 		Wiki f1Wiki = new Wiki();
 		
 		Calendar f1Calendar = new Calendar();
 
-		List<Country> countries = f1Wiki.fillCountry();
+		List<Country> countries = new ArrayList<>();
 
-		for (Country country : countries) {
-			System.out.println(country);
+		f1Wiki.fillCountry(countries);
+
+		Version version = new Version();
+		Season season = new Season();
+		season.setVersion(version);
+		season.setYear(year);
+		
+		List<GrandPrix> grandPrixes = new ArrayList<>();
+
+		for (int i = 0; i < f1Wiki.getNumberOfRaces(); i++) {
+			grandPrixes.add(new GrandPrix());
 		}
+
+		System.out.println(grandPrixes.size());
+
 
 		// Document f1CalendarRoot = Jsoup.parse(html);
 		
@@ -164,22 +181,6 @@ public class Scrapper {
 		int lastIndexOfSlash = src.lastIndexOf("/");
 
 		return src.substring(lastIndexOfSlash + 1, lastIndexOfSlash + 3);
-	}
-
-	public static String getAbbreviationForEventName(String eventName) {
-		return switch (eventName) {
-			case "1. tréning" -> "P1";
-			case "2. tréning" -> "P2";
-			case "3. tréning" -> "P3";
-			case "Šprint. rozstrel" -> "SQ";
-			case "Šprint" -> "SR";
-			case "Kvalifikácia" -> "Q";
-			case "Preteky" -> "R";
-			default -> {
-				System.out.println("invalid name!");
-				yield "?";
-			}
-		};
 	}
 
 	public static String getValueOfKeyFromProperties(String node) {

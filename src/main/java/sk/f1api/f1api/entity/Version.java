@@ -24,6 +24,11 @@ public class Version implements Identifiable {
     @Column(nullable = false)
     private LocalDateTime created;
 
+    @PrePersist
+    protected void onCreate() {
+        created = LocalDateTime.now();
+    }
+
     @Override
     public boolean isDuplicate(Session session) {
         CriteriaBuilder cb = session.getCriteriaBuilder();

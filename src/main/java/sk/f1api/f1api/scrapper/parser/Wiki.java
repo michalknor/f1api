@@ -17,6 +17,8 @@ public class Wiki {
 
     private Element data;
 
+    private int numberOfRaces;
+
     public Wiki() {
         data = Scrapper.getDocument(Scrapper.getValueOfKeyFromProperties("url.wiki"))
                 .select("""
@@ -31,14 +33,21 @@ public class Wiki {
                         table:nth-of-type(3) >
                         tbody
                         """).first();
+        // System.out.println(data.html());
+        numberOfRaces = 0;
+        while (true) {
+            try {
+                numberOfRaces = Integer.parseInt(data.select("tr:nth-of-type(" + (numberOfRaces + 2) + ") > th").html());
+            } catch (Exception e) {
+                break;
+            }
+        }
     }
 
-    public List<Country> fillCountry() {
+    public void fillCountry(List<Country> countries) {
         int trIndex = 2;
 
 		Element f1Races = data.select("tr:nth-of-type(" + trIndex + ")").first();
-
-        List<Country> countries = new ArrayList<>();
 
 		while (f1Races != null) {
 			Element imgElements = f1Races.select("img").first();
@@ -51,7 +60,5 @@ public class Wiki {
 			trIndex++;
 			f1Races = data.select("tr:nth-of-type(" + trIndex + ")").first();
 		}
-
-        return countries;
     }
 }

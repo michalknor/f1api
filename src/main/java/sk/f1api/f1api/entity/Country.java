@@ -41,6 +41,6 @@ public class Country implements Identifiable {
 
     @Override
     public String toString() {
-        return "Country(id='" + id + "', abbreviation='" + abbreviation + "', name='" + name + "''";
+        return "Country(id='" + id + "', abbreviation='" + abbreviation + "', name='" + name + "'";
     }
 }
