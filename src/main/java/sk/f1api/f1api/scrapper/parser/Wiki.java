@@ -48,8 +48,9 @@ public class Wiki {
         if (race <= 0 || race > numberOfRaces) {
             return;
         }
-        
-        String location = data.select("tr:nth-of-type(" + (race + 1) + ") > td:nth-of-type(2) > span > a").html();
+
+        Element td = data.select("tr:nth-of-type(" + (race + 1) + ") > td:nth-of-type(2)").first();
+        String location = td.select(":root > span > a").html();
 
         if (!location.isEmpty()) {
             city.setName(location.substring(location.indexOf(",") + 2, location.length()));
@@ -57,8 +58,7 @@ public class Wiki {
             return;
         }
 
-        city.setName(data.select("tr:nth-of-type(" + (race + 1) + ") > td:nth-of-type(2) > a:nth-of-type(2)").first()
-                .text());
+        city.setName(td.select(":root > a:nth-of-type(2)").first().text());
 
         return;
     }
@@ -72,6 +72,7 @@ public class Wiki {
         Element imgElements = f1Races.select("img").first();
 
         country.setName(imgElements.attr("alt"));
+
         return;
     }
 }
