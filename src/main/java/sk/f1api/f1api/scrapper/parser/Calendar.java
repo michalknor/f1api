@@ -1,5 +1,6 @@
 package sk.f1api.f1api.scrapper.parser;
 
+import sk.f1api.f1api.entity.City;
 import sk.f1api.f1api.entity.Country;
 import sk.f1api.f1api.scrapper.Scrapper;
 

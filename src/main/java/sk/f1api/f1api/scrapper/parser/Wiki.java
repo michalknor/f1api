@@ -1,8 +1,10 @@
 package sk.f1api.f1api.scrapper.parser;
 
+import sk.f1api.f1api.entity.City;
 import sk.f1api.f1api.entity.Country;
 import sk.f1api.f1api.scrapper.Scrapper;
 
+import java.util.List;
 import org.jsoup.nodes.Element;
 
 import lombok.Getter;
@@ -30,24 +32,44 @@ public class Wiki {
                         table:nth-of-type(3) >
                         tbody
                         """).first();
-        
+
         numberOfRaces = 0;
         while (true) {
             try {
-                numberOfRaces = Integer.parseInt(data.select("tr:nth-of-type(" + (numberOfRaces + 2) + ") > th").html());
+                numberOfRaces = Integer
+                        .parseInt(data.select("tr:nth-of-type(" + (numberOfRaces + 2) + ") > th").html());
             } catch (Exception e) {
                 break;
             }
         }
     }
 
-    public void fillCountry(Country country, int round) {
-		Element f1Races = data.select("tr:nth-of-type(" + (round + 1) + ")").first();
-        Element imgElements = f1Races.select("img").first();
-
-        if (imgElements == null) {
+    public void fillCity(City city, int race) {
+        if (race <= 0 || race > numberOfRaces) {
             return;
         }
+        
+        String location = data.select("tr:nth-of-type(" + (race + 1) + ") > td:nth-of-type(2) > span > a").html();
+
+        if (!location.isEmpty()) {
+            city.setName(location.substring(location.indexOf(",") + 2, location.length()));
+
+            return;
+        }
+
+        city.setName(data.select("tr:nth-of-type(" + (race + 1) + ") > td:nth-of-type(2) > a:nth-of-type(2)").first()
+                .text());
+
+        return;
+    }
+
+    public void fillCountry(Country country, int race) {
+        if (race <= 0 || race > numberOfRaces) {
+            return;
+        }
+
+        Element f1Races = data.select("tr:nth-of-type(" + (race + 1) + ")").first();
+        Element imgElements = f1Races.select("img").first();
 
         country.setName(imgElements.attr("alt"));
         return;

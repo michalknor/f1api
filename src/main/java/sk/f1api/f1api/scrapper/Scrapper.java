@@ -54,7 +54,7 @@ public class Scrapper {
 		season.setVersion(version);
 		season.setYear(year);
 		
-		List<GrandPrix> grandPrixes = new ArrayList<>();
+		GrandPrix[] grandPrixes = new GrandPrix[f1Wiki.getNumberOfRaces()];
 
 		for (int i = 1; i < f1Wiki.getNumberOfRaces() + 1; i++) {
 			GrandPrix grandPrix = new GrandPrix();
@@ -71,13 +71,16 @@ public class Scrapper {
 			Country country = new Country();
 			city.setCountry(country);
 			
+			f1Wiki.fillCity(grandPrix.getCircuit().getCity(), i);
 			f1Wiki.fillCountry(grandPrix.getCircuit().getCity().getCountry(), i);
 			f1Calendar.fillCountry(grandPrix.getCircuit().getCity().getCountry(), i);
 
-			grandPrixes.add(grandPrix);
+			grandPrixes[i-1] = grandPrix;
 		}
-
-		System.out.println(grandPrixes.size());
+		
+		for (GrandPrix grandPrix : grandPrixes) {
+			System.out.println(grandPrix.getCircuit().getCity());
+		}
 
 
 		// Document f1CalendarRoot = Jsoup.parse(html);

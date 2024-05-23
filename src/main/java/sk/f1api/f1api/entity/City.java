@@ -19,4 +19,9 @@ public class City {
 
     @Column(nullable = false, length = 50)
     private String name;
+
+    @Override
+    public String toString() {
+        return "Country(id='" + id + "', name='" + name + "', country=" + country + ")";
+    }
 }
