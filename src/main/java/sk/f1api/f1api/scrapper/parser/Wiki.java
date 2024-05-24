@@ -1,5 +1,6 @@
 package sk.f1api.f1api.scrapper.parser;
 
+import sk.f1api.f1api.entity.Circuit;
 import sk.f1api.f1api.entity.City;
 import sk.f1api.f1api.entity.Country;
 import sk.f1api.f1api.scrapper.Scrapper;
@@ -44,21 +45,41 @@ public class Wiki {
         }
     }
 
+    public void fillCircuit(Circuit circuit, int race) {
+        if (race <= 0 || race > numberOfRaces) {
+            return;
+        }
+
+        Element td = data.select("tr:nth-of-type(" + (race + 1) + ") > td:nth-of-type(2)").first();
+        Element circuitName = td.select(":root > a").first();
+
+        if (circuitName != null) {
+            circuit.setName(circuitName.text());
+
+            return;
+        }
+
+        circuit.setName(td.select(":root > span > a:nth-of-type(2)").first().text());
+
+        return;
+    }
+
     public void fillCity(City city, int race) {
         if (race <= 0 || race > numberOfRaces) {
             return;
         }
 
         Element td = data.select("tr:nth-of-type(" + (race + 1) + ") > td:nth-of-type(2)").first();
-        String location = td.select(":root > span > a").html();
+        Element location = td.select(":root > a:nth-of-type(2)").first();
 
-        if (!location.isEmpty()) {
-            city.setName(location.substring(location.indexOf(",") + 2, location.length()));
+        if (location != null) {
+            city.setName(location.text());
 
             return;
         }
 
-        city.setName(td.select(":root > a:nth-of-type(2)").first().text());
+        String locationHtml = td.select(":root > span > a").html();
+        city.setName(locationHtml.substring(locationHtml.indexOf(",") + 2, locationHtml.length()));
 
         return;
     }

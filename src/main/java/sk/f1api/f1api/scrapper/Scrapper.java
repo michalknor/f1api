@@ -8,28 +8,16 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.file.Paths;
 import java.util.AbstractMap;
-import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.Properties;
-import java.util.List;
 
-import org.hibernate.HibernateException;
-import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.Transaction;
 import org.hibernate.cfg.Configuration;
-import org.hibernate.query.Query;
+
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
-import jakarta.persistence.criteria.Root;
-import sk.f1api.f1api.entity.Circuit;
-import sk.f1api.f1api.entity.City;
-import sk.f1api.f1api.entity.Country;
 import sk.f1api.f1api.entity.GrandPrix;
 import sk.f1api.f1api.entity.Season;
 import sk.f1api.f1api.entity.Version;
@@ -47,8 +35,6 @@ public class Scrapper {
 		
 		Calendar f1Calendar = new Calendar();
 
-		List<Country> countries = new ArrayList<>();
-
 		Version version = new Version();
 		Season season = new Season();
 		season.setVersion(version);
@@ -57,20 +43,9 @@ public class Scrapper {
 		GrandPrix[] grandPrixes = new GrandPrix[f1Wiki.getNumberOfRaces()];
 
 		for (int i = 1; i < f1Wiki.getNumberOfRaces() + 1; i++) {
-			GrandPrix grandPrix = new GrandPrix();
-			grandPrix.setSeason(season);
-			grandPrix.setVersion(version);
-			grandPrix.setRound((byte) i);
-
-			Circuit circuit = new Circuit();
-			grandPrix.setCircuit(circuit);
-
-			City city = new City();
-			circuit.setCity(city);
-
-			Country country = new Country();
-			city.setCountry(country);
+			GrandPrix grandPrix = new GrandPrix(version, season, (byte) i);
 			
+			f1Wiki.fillCircuit(grandPrix.getCircuit(), i);
 			f1Wiki.fillCity(grandPrix.getCircuit().getCity(), i);
 			f1Wiki.fillCountry(grandPrix.getCircuit().getCity().getCountry(), i);
 			f1Calendar.fillCountry(grandPrix.getCircuit().getCity().getCountry(), i);
@@ -79,24 +54,8 @@ public class Scrapper {
 		}
 		
 		for (GrandPrix grandPrix : grandPrixes) {
-			System.out.println(grandPrix.getCircuit().getCity());
+			System.out.println(grandPrix);
 		}
-
-
-		// Document f1CalendarRoot = Jsoup.parse(html);
-		
-		// Element f1CalendarCalendar = f1CalendarRoot.select("body > div > main > div > div").first();
-
-		// int sectionIndex = 0;
-		// Element f1CalendarSection = f1CalendarCalendar.select("div:nth-child(" + (sectionIndex + 2) + ") > section").first();
-
-
-		// while (f1CalendarSection != null) {
-		// 	parseRace(f1CalendarSection);
-
-		// 	sectionIndex++;
-		// 	f1CalendarSection = f1CalendarCalendar.select("div:nth-child(" + (sectionIndex + 2) + ") > section").first();
-		// }
 	}
 
 	public static Document getDocument(String url) {
@@ -125,82 +84,6 @@ public class Scrapper {
 		}
 
 		return new AbstractMap.SimpleEntry<>(-1, null);
-	}
-
-	public static void parseRace(Element section) {
-		String countryAbbreviation = getCountryAbbreviation(section.select("div > div > img").first());
-			
-		Country country = new Country();
-
-		country.setAbbreviation(countryAbbreviation);
-
-        Session session = sessionFactory.openSession();
-        Transaction tx = null;
-        try {
-            tx = session.beginTransaction();
-
-			CriteriaBuilder cb = session.getCriteriaBuilder();
-			CriteriaQuery<Country> criteria = cb.createQuery(Country.class);
-			Root<Country> root = criteria.from(Country.class);
-
-			criteria.select(root).where(cb.equal(root.get("abbreviation"), countryAbbreviation));
-
-			Query<Country> query = session.createQuery(criteria);
-			List<Country> countries = query.getResultList();
-
-			if (countries.size() == 0) {
-				country = new Country();
-				country.setAbbreviation(getCountryAbbreviation(section.select("div > div > img").first()));
-				session.persist(country);
-			}
-
-            tx.commit();
-        } catch (HibernateException e) {
-            if (tx != null) {
-                tx.rollback();
-            }
-            e.printStackTrace();
-        } finally {
-            session.close();
-        }
-
-		// for (int i = 1; i < 6; i++) {
-		// 	Element sectionSession = section.select("table > tbody > tr:nth-child(" + i + ")").first();
-
-			// System.out.println(sectionSession);
-
-			// System.out.println("");
-
-			// System.out.println(getAbbreviationForEventName(sectionSession.select("td").first().text()));
-		// }
-
-
-		// race = {}
-		// race["title"] = get_country_abbreviation(section.find("div/div/img").values())
-		// sessions = []
-	
-		// for i in range(1, 6):
-		// 	sectionSession = section.find(f"table/tbody/tr[{i}]")
-		// 	session = {}
-		// 	session["name"] = get_abbreviation_name(sectionSession.find("td").text.strip())
-		// 	session["day"], session["month"] = sectionSession.find("td[2]").text.strip().replace("  ", " ").replace(".", "").split(" ")
-		// 	session["time_from"] = sectionSession.find("td[3]/span").text.strip()
-	
-		// 	if sectionSession.find("td[3]/span[2]") is not None:
-		// 		session["time_to"] = sectionSession.find("td[3]/span[2]").text.strip().replace("- ", "")
-		// 	sessions.append(session)
-	
-		// race["sessions"] = sessions
-	
-		// return race
-	}
-
-	public static String getCountryAbbreviation(Element imgValues) {
-		String src = imgValues.attributes().get("src");
-
-		int lastIndexOfSlash = src.lastIndexOf("/");
-
-		return src.substring(lastIndexOfSlash + 1, lastIndexOfSlash + 3);
 	}
 
 	public static String getValueOfKeyFromProperties(String node) {
