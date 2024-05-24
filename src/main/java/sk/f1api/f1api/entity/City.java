@@ -20,8 +20,12 @@ public class City {
     @Column(nullable = false, length = 50)
     private String name;
 
+    public City() {
+        country = new Country();
+    }
+
     @Override
     public String toString() {
-        return "Country(id='" + id + "', name='" + name + "', country=" + country + ")";
+        return "City(id='" + id + "', name='" + name + "', country=" + country + ")";
     }
 }

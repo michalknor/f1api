@@ -19,4 +19,13 @@ public class Circuit {
 
     @Column(nullable = false, unique = true, length = 50)
     private String name;
+
+    public Circuit() {
+        city = new City();
+    }
+
+    @Override
+    public String toString() {
+        return "Country(id='" + id + "', name='" + name + "', city=" + city + ")";
+    }
 }

@@ -10,7 +10,7 @@ import lombok.Setter;
 @Table(name = "grand_prix")
 public class GrandPrix {
 
-	@Id
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
@@ -34,4 +34,16 @@ public class GrandPrix {
 
     @Column(nullable = false)
     private boolean cancelled;
+
+    public GrandPrix(Version version, Season season, Byte round) {
+        this.season = season;
+        this.version = version;
+        this.round = round;
+        this.circuit = new Circuit();
+    }
+
+    @Override
+    public String toString() {
+        return String.format("GrandPrix(id='%s', round='%s', name='%s', cancelled='%s', version=%s, season=%s, circuit=%s)", id, round, name, cancelled, version, season, circuit);
+    }
 }
