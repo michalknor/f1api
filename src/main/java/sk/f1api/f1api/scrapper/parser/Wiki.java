@@ -3,9 +3,10 @@ package sk.f1api.f1api.scrapper.parser;
 import sk.f1api.f1api.entity.Circuit;
 import sk.f1api.f1api.entity.City;
 import sk.f1api.f1api.entity.Country;
+import sk.f1api.f1api.entity.GrandPrix;
 import sk.f1api.f1api.scrapper.Scrapper;
 
-import java.util.List;
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import lombok.Getter;
@@ -15,12 +16,15 @@ import lombok.Setter;
 @Getter
 public class Wiki {
 
-    private Element data;
+    private Document document;
+
+    private Element mainContent;
 
     private int numberOfRaces;
 
     public Wiki() {
-        data = Scrapper.getDocument(Scrapper.getValueOfKeyFromProperties("url.wiki"))
+		document = Scrapper.getDocument(Scrapper.getValueOfKeyFromProperties("url.wiki"));
+        mainContent = document
                 .select("""
                         body >
                         div:nth-of-type(2) >
@@ -38,11 +42,31 @@ public class Wiki {
         while (true) {
             try {
                 numberOfRaces = Integer
-                        .parseInt(data.select("tr:nth-of-type(" + (numberOfRaces + 2) + ") > th").html());
+                        .parseInt(mainContent.select("tr:nth-of-type(" + (numberOfRaces + 2) + ") > th").html());
             } catch (Exception e) {
                 break;
             }
         }
+    }
+
+    //TODO
+    public void fillGrandPrix(GrandPrix grandPrix, int race) {
+        if (race <= 0 || race > numberOfRaces) {
+            return;
+        }
+
+        Element td = mainContent.select("tr:nth-of-type(" + (race + 1) + ") > td:nth-of-type(2)").first();
+        Element circuitName = td.select(":root > a").first();
+
+        if (circuitName != null) {
+            grandPrix.setName(circuitName.text());
+
+            return;
+        }
+
+        grandPrix.setName(td.select(":root > span > a:nth-of-type(2)").first().text());
+
+        return;
     }
 
     public void fillCircuit(Circuit circuit, int race) {
@@ -50,7 +74,7 @@ public class Wiki {
             return;
         }
 
-        Element td = data.select("tr:nth-of-type(" + (race + 1) + ") > td:nth-of-type(2)").first();
+        Element td = mainContent.select("tr:nth-of-type(" + (race + 1) + ") > td:nth-of-type(2)").first();
         Element circuitName = td.select(":root > a").first();
 
         if (circuitName != null) {
@@ -69,7 +93,7 @@ public class Wiki {
             return;
         }
 
-        Element td = data.select("tr:nth-of-type(" + (race + 1) + ") > td:nth-of-type(2)").first();
+        Element td = mainContent.select("tr:nth-of-type(" + (race + 1) + ") > td:nth-of-type(2)").first();
         Element location = td.select(":root > a:nth-of-type(2)").first();
 
         if (location != null) {
@@ -89,7 +113,7 @@ public class Wiki {
             return;
         }
 
-        Element f1Races = data.select("tr:nth-of-type(" + (race + 1) + ")").first();
+        Element f1Races = mainContent.select("tr:nth-of-type(" + (race + 1) + ")").first();
         Element imgElements = f1Races.select("img").first();
 
         country.setName(imgElements.attr("alt"));

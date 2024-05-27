@@ -1,9 +1,9 @@
 package sk.f1api.f1api.scrapper.parser;
 
-import sk.f1api.f1api.entity.City;
 import sk.f1api.f1api.entity.Country;
 import sk.f1api.f1api.scrapper.Scrapper;
 
+import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import lombok.Getter;
@@ -13,12 +13,15 @@ import lombok.Setter;
 @Getter
 public class Calendar {
 
-    private Element data;
+	private Document document;
+
+    private Element mainContent;
 
     private int numberOfRaces;
 
     public Calendar() {
-        data = Scrapper.getDocument(Scrapper.getValueOfKeyFromProperties("url.calendar"))
+		document = Scrapper.getDocument(Scrapper.getValueOfKeyFromProperties("url.calendar"));
+        mainContent = document
                 .select("""
                         body >
                         div >
@@ -27,12 +30,12 @@ public class Calendar {
                         div
                         """).first();
 		
-		String lastRace = data.lastElementChild().select("div > section > div > div > h4").first().html();
+		String lastRace = mainContent.lastElementChild().select("div > section > div > div > h4").first().html();
 		numberOfRaces = Integer.parseInt(lastRace.substring(0, lastRace.indexOf("."))) - 1;
     }
 
 	public void fillCountry(Country country, int round) {
-		Element f1Races = data.select("div:nth-of-type(" + (round + 1) + ") > section > div > div > img").first();
+		Element f1Races = mainContent.select("div:nth-of-type(" + (round + 1) + ") > section > div > div > img").first();
 
 		String abbreviation = f1Races.attr("src");
 		int indexFrom = abbreviation.lastIndexOf("/") + 1;
