@@ -45,6 +45,8 @@ public class Scrapper {
 		for (int i = 1; i < f1Wiki.getNumberOfRaces() + 1; i++) {
 			GrandPrix grandPrix = new GrandPrix(version, season, (byte) i);
 			
+			f1Calendar.fillEvents(grandPrix, i);
+			f1Wiki.fillGrandPrix(grandPrix, i);
 			f1Wiki.fillCircuit(grandPrix.getCircuit(), i);
 			f1Wiki.fillCity(grandPrix.getCircuit().getCity(), i);
 			f1Wiki.fillCountry(grandPrix.getCircuit().getCity().getCountry(), i);

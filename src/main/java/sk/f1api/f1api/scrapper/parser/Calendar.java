@@ -1,7 +1,12 @@
 package sk.f1api.f1api.scrapper.parser;
 
 import sk.f1api.f1api.entity.Country;
+import sk.f1api.f1api.entity.Event;
+import sk.f1api.f1api.entity.GrandPrix;
 import sk.f1api.f1api.scrapper.Scrapper;
+
+import java.util.List;
+import java.util.ArrayList;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -32,6 +37,17 @@ public class Calendar {
 		
 		String lastRace = mainContent.lastElementChild().select("div > section > div > div > h4").first().html();
 		numberOfRaces = Integer.parseInt(lastRace.substring(0, lastRace.indexOf("."))) - 1;
+    }
+
+	public void fillEvents(GrandPrix grandPrix, int round) {
+		List<Event> events = new ArrayList<>();
+
+		Event event = new Event();
+		event.setGrandPrix(grandPrix);
+		event.setRound((byte) 1);
+
+		events.add(event);
+		grandPrix.setEvents(events);
     }
 
 	public void fillCountry(Country country, int round) {

@@ -1,5 +1,7 @@
 package sk.f1api.f1api.entity;
 
+import java.util.List;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,6 +28,10 @@ public class GrandPrix {
     @JoinColumn(name = "circuit_id")
     Circuit circuit;
 
+    @OneToMany(mappedBy = "grandPrix")
+    private List<Event> events;
+
+
     @Column(nullable = false)
     private Byte round;
 
@@ -44,6 +50,16 @@ public class GrandPrix {
 
     @Override
     public String toString() {
-        return String.format("GrandPrix(id='%s', round='%s', name='%s', cancelled='%s', version=%s, season=%s, circuit=%s)", id, round, name, cancelled, version, season, circuit);
+        String eventsConcated = "";
+        if (events.isEmpty()) {
+            eventsConcated = "null";
+        } else {
+            for (Event event : events) {
+                eventsConcated += event + ", ";
+            }
+            eventsConcated = eventsConcated.substring(0, eventsConcated.length() - 3);
+        }
+        
+        return String.format("GrandPrix(id='%s', round='%s', name='%s', cancelled='%s', version=%s, season=%s, circuit=%s, events=[%s])", id, round, name, cancelled, version, season, circuit, eventsConcated);
     }
 }

@@ -59,4 +59,9 @@ public class Event implements Identifiable {
 
         return session.createQuery(criteria).getMaxResults() > 0;
     }
+
+    @Override
+    public String toString() {
+        return String.format("Event(id='%s', round='%s', timeFrom='%s', timeTo='%s', sessionType=%s)", id, round, timeFrom, timeTo, sessionType);
+    }
 }

@@ -49,22 +49,22 @@ public class Wiki {
         }
     }
 
-    //TODO
     public void fillGrandPrix(GrandPrix grandPrix, int race) {
         if (race <= 0 || race > numberOfRaces) {
             return;
         }
 
-        Element td = mainContent.select("tr:nth-of-type(" + (race + 1) + ") > td:nth-of-type(2)").first();
-        Element circuitName = td.select(":root > a").first();
+        Element td = mainContent.select("tr:nth-of-type(" + (race + 1) + ") > td").first();
+        Element grandPrixNameElement = td.select(":root > a").first();
+        String GrandPrixName;
 
-        if (circuitName != null) {
-            grandPrix.setName(circuitName.text());
-
-            return;
+        if (grandPrixNameElement != null) {
+            GrandPrixName = grandPrixNameElement.text();
+        } else {
+            GrandPrixName = td.select(":root > span > a").first().text();
         }
 
-        grandPrix.setName(td.select(":root > span > a:nth-of-type(2)").first().text());
+        grandPrix.setName(GrandPrixName.replace(" Grand Prix", ""));
 
         return;
     }
