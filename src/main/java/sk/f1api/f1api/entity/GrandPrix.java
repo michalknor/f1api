@@ -51,7 +51,7 @@ public class GrandPrix {
     @Override
     public String toString() {
         String eventsConcated = "";
-        if (events.isEmpty()) {
+        if (events == null || events.isEmpty()) {
             eventsConcated = "null";
         } else {
             for (Event event : events) {

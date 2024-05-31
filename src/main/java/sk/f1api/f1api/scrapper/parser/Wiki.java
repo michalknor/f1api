@@ -6,7 +6,6 @@ import sk.f1api.f1api.entity.Country;
 import sk.f1api.f1api.entity.GrandPrix;
 import sk.f1api.f1api.scrapper.Scrapper;
 
-import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
 import lombok.Getter;
@@ -14,17 +13,16 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class Wiki {
-
-    private Document document;
+public class Wiki extends Parser {
 
     private Element mainContent;
 
     private int numberOfRaces;
 
     public Wiki() {
-		document = Scrapper.getDocument(Scrapper.getValueOfKeyFromProperties("url.wiki"));
-        mainContent = document
+		super(Scrapper.getDocument(Scrapper.getValueOfKeyFromProperties("url.wiki")));
+        
+        mainContent = getDocument()
                 .select("""
                         body >
                         div:nth-of-type(2) >

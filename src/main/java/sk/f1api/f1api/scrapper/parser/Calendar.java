@@ -36,10 +36,14 @@ public class Calendar {
                         """).first();
 		
 		String lastRace = mainContent.lastElementChild().select("div > section > div > div > h4").first().html();
-		numberOfRaces = Integer.parseInt(lastRace.substring(0, lastRace.indexOf("."))) - 1;
+		numberOfRaces = Integer.parseInt(lastRace.substring(0, lastRace.indexOf(".")));
     }
 
-	public void fillEvents(GrandPrix grandPrix, int round) {
+	public void fillEvents(GrandPrix grandPrix, int race) {
+        if (race <= 0 || race > numberOfRaces) {
+            return;
+        }
+
 		List<Event> events = new ArrayList<>();
 
 		Event event = new Event();
@@ -50,8 +54,12 @@ public class Calendar {
 		grandPrix.setEvents(events);
     }
 
-	public void fillCountry(Country country, int round) {
-		Element f1Races = mainContent.select("div:nth-of-type(" + (round + 1) + ") > section > div > div > img").first();
+	public void fillCountry(Country country, int race) {
+        if (race <= 0 || race > numberOfRaces) {
+            return;
+        }
+
+		Element f1Races = mainContent.select("div:nth-of-type(" + (race + 1) + ") > section > div > div > img").first();
 
 		String abbreviation = f1Races.attr("src");
 		int indexFrom = abbreviation.lastIndexOf("/") + 1;
