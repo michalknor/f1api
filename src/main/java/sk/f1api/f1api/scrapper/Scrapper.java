@@ -32,6 +32,7 @@ public class Scrapper {
 		short year = 2024;
 
 		Wiki f1Wiki = new Wiki();
+		f1Wiki.saveToFile("wiki.html");
 		
 		Calendar f1Calendar = new Calendar();
 

@@ -6,10 +6,13 @@ import sk.f1api.f1api.entity.GrandPrix;
 import sk.f1api.f1api.scrapper.Scrapper;
 
 import java.util.List;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -45,13 +48,41 @@ public class Calendar {
         }
 
 		List<Event> events = new ArrayList<>();
+		
+		Elements scheduleTable = mainContent.select("div:nth-of-type(" + (race + 1) + ") > section > table > tbody > tr");
+		
+		DateTimeFormatter dateTimeFormatterFrom = DateTimeFormatter.ofPattern("yyyy d. M. HH:mm");
+		DateTimeFormatter dateTimeFormatterTo = DateTimeFormatter.ofPattern("yyyy d. M. - HH:mm");
 
-		Event event = new Event();
-		event.setGrandPrix(grandPrix);
-		event.setRound((byte) 1);
+		for (int i = 0; i < scheduleTable.size(); i++) {
+			Elements eventInfo = scheduleTable.get(i).select("td");
 
-		events.add(event);
-		grandPrix.setEvents(events);
+			Event event = new Event();
+
+			Elements times = eventInfo.get(2).select("span");
+
+			event.setGrandPrix(grandPrix);
+			event.setRound((byte) (i + 1));
+			event.setTimeFrom(LocalDateTime.parse("2024 " + eventInfo.get(1).text() + " " + times.first().text(), dateTimeFormatterFrom));
+
+			System.out.println(event.getTimeFrom());
+			if (times.size() == 2) {
+				event.setTimeTo(LocalDateTime.parse("2024 " + eventInfo.get(1).text() + " " + times.get(1).text(), dateTimeFormatterTo));
+			}
+
+			// System.out.println(getAbbreviationForEventName(eventInfo.get(0).text()));
+
+			//event.setSessionType();
+
+			events.add(event);
+		}
+
+		// Event event = new Event();
+		// event.setGrandPrix(grandPrix);
+		// event.setRound((byte) 1);
+
+		// events.add(event);
+		// grandPrix.setEvents(events);
     }
 
 	public void fillCountry(Country country, int race) {
