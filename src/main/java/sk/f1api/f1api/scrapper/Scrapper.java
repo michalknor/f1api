@@ -18,6 +18,7 @@ import org.hibernate.cfg.Configuration;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
+import sk.f1api.f1api.entity.EventType;
 import sk.f1api.f1api.entity.GrandPrix;
 import sk.f1api.f1api.entity.Season;
 import sk.f1api.f1api.entity.Version;
@@ -28,6 +29,8 @@ public class Scrapper {
 	public static SessionFactory sessionFactory;
 	public static void main(String[] args) {
 		initSessionFactory();
+
+		EventType.fillTable(sessionFactory.openSession());
 
 		short year = 2024;
 

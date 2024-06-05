@@ -10,11 +10,11 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public abstract class Parser {
+public abstract class AbstractParser {
 
     private Document document;
 
-    public Parser(Document document) {
+    public AbstractParser(Document document) {
         this.document = document;
     }
 

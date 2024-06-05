@@ -13,7 +13,7 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class Wiki extends Parser {
+public class Wiki extends AbstractParser {
 
     private Element mainContent;
 

@@ -18,7 +18,7 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "event_type")
-public class EventType implements Identifiable {
+public class EventType  extends AbstractEntity implements Identifiable {
 
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -83,5 +83,24 @@ public class EventType implements Identifiable {
         } finally {
             session.close();
         }
+    }
+
+    public void load(Session session) {
+        CriteriaBuilder cb = session.getCriteriaBuilder();
+        CriteriaQuery<EventType> criteria = cb.createQuery(EventType.class);
+        Root<EventType> root = criteria.from(EventType.class);
+
+        criteria.select(root).where(cb.equal(root.get("abbreviation"), abbreviation));
+
+        EventType eventType = session.createQuery(criteria).setMaxResults(1).uniqueResult();
+
+        if (eventType != null) {
+            this.copy(eventType);
+        }
+    }
+
+    @Override
+    public String toString() {
+        return String.format("EventType(id='%s', abbreviation='%s', name='%s')", id, abbreviation, name);
     }
 }

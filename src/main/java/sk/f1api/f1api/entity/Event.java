@@ -27,8 +27,8 @@ public class Event implements Identifiable {
     GrandPrix grandPrix;
 
     @ManyToOne
-    @JoinColumn(name = "session_type_id")
-    EventType sessionType;
+    @JoinColumn(name = "event_type_id")
+    EventType eventType;
 
     @Column(nullable = false)
     private Byte round;
@@ -62,6 +62,6 @@ public class Event implements Identifiable {
 
     @Override
     public String toString() {
-        return String.format("Event(id='%s', round='%s', timeFrom='%s', timeTo='%s', sessionType=%s)", id, round, timeFrom, timeTo, sessionType);
+        return String.format("Event(id='%s', round='%s', timeFrom='%s', timeTo='%s', sessionType=%s)", id, round, timeFrom, timeTo, eventType);
     }
 }

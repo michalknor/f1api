@@ -2,6 +2,7 @@ package sk.f1api.f1api.scrapper.parser;
 
 import sk.f1api.f1api.entity.Country;
 import sk.f1api.f1api.entity.Event;
+import sk.f1api.f1api.entity.EventType;
 import sk.f1api.f1api.entity.GrandPrix;
 import sk.f1api.f1api.scrapper.Scrapper;
 
@@ -70,19 +71,16 @@ public class Calendar {
 				event.setTimeTo(LocalDateTime.parse("2024 " + eventInfo.get(1).text() + " " + times.get(1).text(), dateTimeFormatterTo));
 			}
 
-			// System.out.println(getAbbreviationForEventName(eventInfo.get(0).text()));
+			EventType eventType = new EventType();
+			eventType.setAbbreviation(getAbbreviationForEventName(eventInfo.get(0).text()));
+			eventType.load(Scrapper.sessionFactory.openSession());
 
-			//event.setSessionType();
+			event.setEventType(eventType);
 
 			events.add(event);
 		}
 
-		// Event event = new Event();
-		// event.setGrandPrix(grandPrix);
-		// event.setRound((byte) 1);
-
-		// events.add(event);
-		// grandPrix.setEvents(events);
+		grandPrix.setEvents(events);
     }
 
 	public void fillCountry(Country country, int race) {
