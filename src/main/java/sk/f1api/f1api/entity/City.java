@@ -13,9 +13,9 @@ public class City {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "country_id")
-    Country country;
+    private Country country;
 
     @Column(nullable = false, length = 50)
     private String name;

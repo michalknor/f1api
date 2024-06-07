@@ -11,10 +11,11 @@ import java.util.AbstractMap;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.Properties;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -44,7 +45,7 @@ public class Scrapper {
 		season.setVersion(version);
 		season.setYear(year);
 		
-		GrandPrix[] grandPrixes = new GrandPrix[f1Wiki.getNumberOfRaces()];
+		List<GrandPrix> grandPrixes = new ArrayList<>(f1Wiki.getNumberOfRaces());
 
 		for (int i = 1; i < f1Wiki.getNumberOfRaces() + 1; i++) {
 			GrandPrix grandPrix = new GrandPrix(version, season, (byte) i);
@@ -56,12 +57,17 @@ public class Scrapper {
 			f1Wiki.fillCountry(grandPrix.getCircuit().getCity().getCountry(), i);
 			f1Calendar.fillCountry(grandPrix.getCircuit().getCity().getCountry(), i);
 
-			grandPrixes[i-1] = grandPrix;
+			grandPrixes.add(i - 1, grandPrix);
 		}
+
+		version.setSeason(season);
+		season.setGrandPrixes(grandPrixes);
 		
 		for (GrandPrix grandPrix : grandPrixes) {
 			System.out.println(grandPrix);
 		}
+
+		version.save(sessionFactory.openSession());
 	}
 
 	public static Document getDocument(String url) {

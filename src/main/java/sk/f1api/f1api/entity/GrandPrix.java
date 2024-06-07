@@ -2,6 +2,10 @@ package sk.f1api.f1api.entity;
 
 import java.util.List;
 
+import org.hibernate.HibernateException;
+import org.hibernate.Session;
+import org.hibernate.Transaction;
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,19 +20,19 @@ public class GrandPrix {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "version_id")
-    Version version;
+    private Version version;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "season_id")
-    Season season;
+    private Season season;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "circuit_id")
-    Circuit circuit;
+    private Circuit circuit;
 
-    @OneToMany(mappedBy = "grandPrix")
+    @OneToMany(mappedBy = "grandPrix", cascade = CascadeType.ALL)
     private List<Event> events;
 
 
@@ -61,5 +65,21 @@ public class GrandPrix {
         }
         
         return String.format("GrandPrix(id='%s', round='%s', name='%s', cancelled='%s', version=%s, season=%s, circuit=%s, events=[%s])", id, round, name, cancelled, version, season, circuit, eventsConcated);
+    }
+
+    public void save(Session session) {
+        Transaction tx = null;
+        try {
+            tx = session.beginTransaction();
+            session.persist(this);
+            tx.commit();
+        } catch (HibernateException e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
     }
 }

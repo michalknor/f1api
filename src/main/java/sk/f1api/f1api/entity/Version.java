@@ -1,7 +1,10 @@
 package sk.f1api.f1api.entity;
 
 import java.util.List;
+
+import org.hibernate.HibernateException;
 import org.hibernate.Session;
+import org.hibernate.Transaction;
 
 import jakarta.persistence.*;
 import jakarta.persistence.criteria.CriteriaBuilder;
@@ -20,6 +23,9 @@ public class Version implements Identifiable {
 	@Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
+
+    @OneToOne(mappedBy = "version", cascade = CascadeType.ALL)
+    private Season season;
 
     @Column(nullable = false)
     private LocalDateTime created;
@@ -40,5 +46,21 @@ public class Version implements Identifiable {
         List<EventType> sessionTypes = session.createQuery(criteria).getResultList();
 
         return sessionTypes.size() == 1;
+    }
+
+    public void save(Session session) {
+        Transaction tx = null;
+        try {
+            tx = session.beginTransaction();
+            session.persist(this);
+            tx.commit();
+        } catch (HibernateException e) {
+            if (tx != null) {
+                tx.rollback();
+            }
+            e.printStackTrace();
+        } finally {
+            session.close();
+        }
     }
 }

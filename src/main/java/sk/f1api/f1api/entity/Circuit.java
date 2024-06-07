@@ -13,9 +13,9 @@ public class Circuit {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "city_id")
-    City city;
+    private City city;
 
     @Column(nullable = false, unique = true, length = 50)
     private String name;

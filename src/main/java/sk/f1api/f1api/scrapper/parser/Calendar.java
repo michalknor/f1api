@@ -11,7 +11,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
-import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
@@ -20,16 +19,10 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class Calendar {
-
-	private Document document;
-
-    private Element mainContent;
-
-    private int numberOfRaces;
+public class Calendar extends AbstractParser {
 
     public Calendar() {
-		document = Scrapper.getDocument(Scrapper.getValueOfKeyFromProperties("url.calendar"));
+		super(Scrapper.getDocument(Scrapper.getValueOfKeyFromProperties("url.calendar")));
         mainContent = document
                 .select("""
                         body >

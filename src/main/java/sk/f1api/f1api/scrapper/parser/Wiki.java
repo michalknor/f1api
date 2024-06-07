@@ -14,15 +14,10 @@ import lombok.Setter;
 @Setter
 @Getter
 public class Wiki extends AbstractParser {
-
-    private Element mainContent;
-
-    private int numberOfRaces;
-
     public Wiki() {
 		super(Scrapper.getDocument(Scrapper.getValueOfKeyFromProperties("url.wiki")));
         
-        mainContent = getDocument()
+        mainContent = document
                 .select("""
                         body >
                         div:nth-of-type(2) >

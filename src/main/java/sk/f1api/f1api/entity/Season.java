@@ -1,5 +1,7 @@
 package sk.f1api.f1api.entity;
 
+import java.util.List;
+
 import org.hibernate.Session;
 
 import jakarta.persistence.*;
@@ -18,9 +20,12 @@ public class Season implements Identifiable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @OneToMany(mappedBy = "season", cascade = CascadeType.ALL)
+    private List<GrandPrix> grandPrixes;
+
     @ManyToOne
     @JoinColumn(name = "version_id")
-    Version version;
+    private Version version;
 
     @Column(nullable = false, columnDefinition = "SMALLINT")
     private Short year;

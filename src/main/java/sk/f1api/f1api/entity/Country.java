@@ -20,7 +20,7 @@ public class Country implements Identifiable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(nullable = false, unique = true, length = 2, columnDefinition="CHAR")
+    @Column(nullable = false, unique = true, columnDefinition="CHAR(2)")
     private String abbreviation;
 
     @Column(nullable = false, unique = true, length = 30)

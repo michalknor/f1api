@@ -4,6 +4,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -12,9 +13,13 @@ import lombok.Setter;
 @Getter
 public abstract class AbstractParser {
 
-    private Document document;
+    protected Document document;
 
-    public AbstractParser(Document document) {
+    protected Element mainContent;
+
+    protected int numberOfRaces;
+
+    protected AbstractParser(Document document) {
         this.document = document;
     }
 

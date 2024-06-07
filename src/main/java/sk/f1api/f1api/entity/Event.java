@@ -22,13 +22,13 @@ public class Event implements Identifiable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "grand_prix_id")
-    GrandPrix grandPrix;
+    private GrandPrix grandPrix;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "event_type_id")
-    EventType eventType;
+    private EventType eventType;
 
     @Column(nullable = false)
     private Byte round;
