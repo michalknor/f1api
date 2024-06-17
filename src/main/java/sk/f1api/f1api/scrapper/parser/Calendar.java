@@ -95,8 +95,8 @@ public class Calendar extends AbstractParser {
 			case "1. tréning" -> "P1";
 			case "2. tréning" -> "P2";
 			case "3. tréning" -> "P3";
-			case "Šprint. rozstrel" -> "SQ";
-			case "Šprint" -> "SR";
+			case "Šprint. kvalifikácia" -> "SQ";
+			case "Šprint" -> "S";
 			case "Kvalifikácia" -> "Q";
 			case "Preteky" -> "R";
 			default -> {

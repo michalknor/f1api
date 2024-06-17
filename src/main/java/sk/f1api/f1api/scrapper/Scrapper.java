@@ -62,6 +62,8 @@ public class Scrapper {
 
 		version.setSeason(season);
 		season.setGrandPrixes(grandPrixes);
+
+		version.removeDuplicity();
 		
 		for (GrandPrix grandPrix : grandPrixes) {
 			System.out.println(grandPrix);
