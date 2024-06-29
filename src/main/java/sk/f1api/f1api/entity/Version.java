@@ -66,28 +66,31 @@ public class Version implements Identifiable {
 
     public void removeDuplicity() {
         List<GrandPrix> grandPrixes = season.getGrandPrixes();
-        
+
         for (int i = 0; i < grandPrixes.size(); i++) {
             GrandPrix grandPrixI = grandPrixes.get(i);
 
             for (int j = i + 1; j < grandPrixes.size(); j++) {
                 GrandPrix grandPrixJ = grandPrixes.get(j);
 
-                if (grandPrixJ.getCircuit().getCity().getCountry().getAbbreviation()
+                if (!grandPrixJ.getCircuit().getCity().getCountry().getAbbreviation()
                         .equals(grandPrixI.getCircuit().getCity().getCountry().getAbbreviation())) {
-                            
-                    grandPrixJ.getCircuit().getCity().setCountry(grandPrixI.getCircuit().getCity().getCountry());
-
-                    if (grandPrixJ.getCircuit().getCity().getName()
-                            .equals(grandPrixI.getCircuit().getCity().getName())) {
-
-                        grandPrixJ.getCircuit().setCity(grandPrixI.getCircuit().getCity());
-
-                        if (grandPrixJ.getCircuit().getName().equals(grandPrixI.getCircuit().getName())) {
-                            grandPrixJ.setCircuit(grandPrixI.getCircuit());
-                        }
-                    }
+                    continue;
                 }
+
+                grandPrixJ.getCircuit().getCity().setCountry(grandPrixI.getCircuit().getCity().getCountry());
+
+                if (!grandPrixJ.getCircuit().getCity().getName()
+                        .equals(grandPrixI.getCircuit().getCity().getName())) {
+                    continue;
+                }
+
+                grandPrixJ.getCircuit().setCity(grandPrixI.getCircuit().getCity());
+
+                if (!grandPrixJ.getCircuit().getName().equals(grandPrixI.getCircuit().getName())) {
+                    continue;
+                }
+                grandPrixJ.setCircuit(grandPrixI.getCircuit());
             }
         }
     }

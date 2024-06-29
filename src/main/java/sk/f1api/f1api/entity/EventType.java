@@ -24,7 +24,7 @@ public class EventType  extends AbstractEntity implements Identifiable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @Column(nullable = false, unique = true, columnDefinition="CHAR(2)")
+    @Column(nullable = false, unique = true, columnDefinition="VARCHAR(2)")
     private String abbreviation;
 
     @Column(nullable = false, unique = true, length = 20)
