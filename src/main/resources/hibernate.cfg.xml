@@ -4,7 +4,7 @@
         <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
         <property name="hibernate.current_session_context_class">thread</property>
         <property name="hibernate.hbm2ddl.auto">update</property>
-        <!-- Other Hibernate properties -->
+        <!-- Entities -->
         <mapping class="sk.f1api.f1api.Test"/>
         <mapping class="sk.f1api.f1api.entity.Circuit"/>
         <mapping class="sk.f1api.f1api.entity.City"/>

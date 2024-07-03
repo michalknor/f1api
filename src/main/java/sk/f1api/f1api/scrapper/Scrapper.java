@@ -8,14 +8,11 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.file.Paths;
 import java.util.AbstractMap;
-import java.util.Enumeration;
 import java.util.Map;
 import java.util.Properties;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -25,13 +22,11 @@ import sk.f1api.f1api.entity.Season;
 import sk.f1api.f1api.entity.Version;
 import sk.f1api.f1api.scrapper.parser.Calendar;
 import sk.f1api.f1api.scrapper.parser.Wiki;
+import sk.f1api.f1api.util.HibernateUtil;
 
 public class Scrapper {
-	public static SessionFactory sessionFactory;
 	public static void main(String[] args) {
-		initSessionFactory();
-
-		EventType.fillTable(sessionFactory.openSession());
+		EventType.fillTable(HibernateUtil.getSessionFactory().openSession());
 
 		short year = 2024;
 
@@ -69,7 +64,7 @@ public class Scrapper {
 			System.out.println(grandPrix);
 		}
 
-		version.save(sessionFactory.openSession());
+		version.save(HibernateUtil.getSessionFactory().openSession());
 	}
 
 	public static Document getDocument(String url) {
@@ -112,28 +107,5 @@ public class Scrapper {
         }
 
 		return "";
-	}
-
-	public static void initSessionFactory() {
-		Configuration configuration = new Configuration().configure("hibernate.cfg.xml");
-
-        Properties dbProperties = new Properties();
-        try (FileInputStream input = new FileInputStream(
-                Paths.get("src", "main", "resources", "database.properties").toString())) {
-            dbProperties.load(input);
-            Enumeration<?> propertyNames = dbProperties.propertyNames();
-            while (propertyNames.hasMoreElements()) {
-                String propertyName = (String) propertyNames.nextElement();
-                String propertyValue = dbProperties.getProperty(propertyName);
-                configuration.setProperty(propertyName, propertyValue);
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        // Create Hibernate SessionFactory
-        Scrapper.sessionFactory = configuration
-                // .addAnnotatedClass(Test.class)
-                .buildSessionFactory();
 	}
 }

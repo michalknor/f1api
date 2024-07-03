@@ -7,6 +7,7 @@ import org.hibernate.Session;
 import jakarta.persistence.*;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Root;
 import lombok.Getter;
 import lombok.Setter;
@@ -44,5 +45,17 @@ public class Season implements Identifiable {
         );
 
         return session.createQuery(criteria).getMaxResults() > 0;
+    }
+
+    public static List<Season> loadAll(Session session) {
+        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+        CriteriaQuery<Season> criteriaQuery = criteriaBuilder.createQuery(Season.class);
+        Root<Season> root = criteriaQuery.from(Season.class);
+
+        root.fetch("grandPrixes", JoinType.LEFT);
+
+        criteriaQuery.select(root);
+
+        return session.createQuery(criteriaQuery).getResultList();
     }
 }

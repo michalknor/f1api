@@ -5,6 +5,7 @@ import sk.f1api.f1api.entity.Event;
 import sk.f1api.f1api.entity.EventType;
 import sk.f1api.f1api.entity.GrandPrix;
 import sk.f1api.f1api.scrapper.Scrapper;
+import sk.f1api.f1api.util.HibernateUtil;
 
 import java.util.List;
 import java.time.LocalDateTime;
@@ -66,7 +67,7 @@ public class Calendar extends AbstractParser {
 
 			EventType eventType = new EventType();
 			eventType.setAbbreviation(getAbbreviationForEventName(eventInfo.get(0).text()));
-			eventType.load(Scrapper.sessionFactory.openSession());
+			eventType.load(HibernateUtil.getSessionFactory().openSession());
 
 			event.setEventType(eventType);
 

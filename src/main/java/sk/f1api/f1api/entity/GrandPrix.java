@@ -45,6 +45,10 @@ public class GrandPrix {
     @Column(nullable = false)
     private boolean cancelled;
 
+    public GrandPrix() {
+        
+    }
+
     public GrandPrix(Version version, Season season, Byte round) {
         this.season = season;
         this.version = version;
