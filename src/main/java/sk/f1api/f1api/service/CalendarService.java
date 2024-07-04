@@ -15,6 +15,10 @@ public class CalendarService {
 
   private List<CalendarModel> calendars;
 
+  public CalendarService() {
+    
+  }
+
   public void loadAll() {
     this.calendars = CalendarModel.loadAll();
   }

@@ -22,11 +22,7 @@ public class Season implements Identifiable {
     private int id;
 
     @OneToMany(mappedBy = "season", cascade = CascadeType.ALL)
-    private List<GrandPrix> grandPrixes;
-
-    @ManyToOne
-    @JoinColumn(name = "version_id")
-    private Version version;
+    private List<Version> versions;
 
     @Column(nullable = false, columnDefinition = "SMALLINT")
     private Short year;
@@ -39,8 +35,7 @@ public class Season implements Identifiable {
 
         criteria.select(root).where(
             cb.and(
-                cb.equal(root.get("year"), year), 
-                cb.equal(root.get("version"), version)
+                cb.equal(root.get("year"), year)
             )
         );
 
@@ -52,10 +47,25 @@ public class Season implements Identifiable {
         CriteriaQuery<Season> criteriaQuery = criteriaBuilder.createQuery(Season.class);
         Root<Season> root = criteriaQuery.from(Season.class);
 
-        root.fetch("grandPrixes", JoinType.LEFT);
+        root.fetch("versions", JoinType.LEFT);
 
         criteriaQuery.select(root);
 
         return session.createQuery(criteriaQuery).getResultList();
+    }
+
+    @Override
+    public String toString() {
+        String versionsConcated = "";
+        if (versions == null || versions.isEmpty()) {
+            versionsConcated = "null";
+        } else {
+            for (Version version : versions) {
+                versionsConcated += version + ", ";
+            }
+            versionsConcated = versionsConcated.substring(0, versionsConcated.length() - 3);
+        }
+
+        return String.format("Season(id='%s', year='%d', versions=[%s])", id, year, versionsConcated);
     }
 }

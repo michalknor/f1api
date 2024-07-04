@@ -1,27 +1,31 @@
 package sk.f1api.f1api.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import lombok.Getter;
-import lombok.Setter;
 import sk.f1api.f1api.entity.Season;
+import sk.f1api.f1api.entity.Version;
 import sk.f1api.f1api.util.HibernateUtil;
 
 @Getter
-@Setter
 public class CalendarModel {
 
 	private int year;
 
-	private List<GrandPrixModel> grandPrixes;
+	private HashMap<Byte, GrandPrixModel> grandPrixes;
 
 	public CalendarModel(Season season) {
 		this.year = season.getYear();
-		this.grandPrixes = new ArrayList<GrandPrixModel>();
+		this.grandPrixes = new HashMap<>();
 		
-		if (season.getGrandPrixes() != null) {
-			season.getGrandPrixes().forEach(grandPrix -> this.grandPrixes.add(new GrandPrixModel(grandPrix)));
+		if (season.getVersions() != null) {
+			for (Version version : season.getVersions()) {
+				if (version.getGrandPrixes() != null) {
+					version.getGrandPrixes().forEach(grandPrix -> this.grandPrixes.put(grandPrix.getRound(), new GrandPrixModel(grandPrix)));
+				}
+			}
 		}
 	}
 

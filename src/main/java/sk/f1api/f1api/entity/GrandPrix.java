@@ -25,10 +25,6 @@ public class GrandPrix {
     private Version version;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "season_id")
-    private Season season;
-
-    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "circuit_id")
     private Circuit circuit;
 
@@ -49,8 +45,7 @@ public class GrandPrix {
         
     }
 
-    public GrandPrix(Version version, Season season, Byte round) {
-        this.season = season;
+    public GrandPrix(Version version, Byte round) {
         this.version = version;
         this.round = round;
         this.circuit = new Circuit();
@@ -68,7 +63,7 @@ public class GrandPrix {
             eventsConcated = eventsConcated.substring(0, eventsConcated.length() - 3);
         }
         
-        return String.format("GrandPrix(id='%s', round='%s', name='%s', cancelled='%s', version=%s, season=%s, circuit=%s, events=[%s])", id, round, name, cancelled, version, season, circuit, eventsConcated);
+        return String.format("GrandPrix(id='%s', round='%s', name='%s', cancelled='%s', circuit=%s, events=[%s])", id, round, name, cancelled, circuit, eventsConcated);
     }
 
     public void save(Session session) {

@@ -11,6 +11,7 @@ import java.util.AbstractMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.jsoup.Jsoup;
@@ -35,15 +36,15 @@ public class Scrapper {
 		
 		Calendar f1Calendar = new Calendar();
 
-		Version version = new Version();
 		Season season = new Season();
-		season.setVersion(version);
 		season.setYear(year);
+
+		Version version = new Version();
 		
 		List<GrandPrix> grandPrixes = new ArrayList<>(f1Wiki.getNumberOfRaces());
 
 		for (int i = 1; i < f1Wiki.getNumberOfRaces() + 1; i++) {
-			GrandPrix grandPrix = new GrandPrix(version, season, (byte) i);
+			GrandPrix grandPrix = new GrandPrix(version, (byte) i);
 			
 			f1Calendar.fillEvents(grandPrix, i);
 			f1Wiki.fillGrandPrix(grandPrix, i);
@@ -56,14 +57,14 @@ public class Scrapper {
 		}
 
 		version.setSeason(season);
-		season.setGrandPrixes(grandPrixes);
+		version.setGrandPrixes(grandPrixes);
 
 		version.removeDuplicity();
-		
-		for (GrandPrix grandPrix : grandPrixes) {
-			System.out.println(grandPrix);
-		}
 
+		season.setVersions(new ArrayList<>(Arrays.asList(version)));
+
+		System.out.println(season);
+		
 		version.save(HibernateUtil.getSessionFactory().openSession());
 	}
 

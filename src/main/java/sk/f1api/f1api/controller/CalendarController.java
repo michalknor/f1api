@@ -30,7 +30,7 @@ public class CalendarController {
   @Autowired
   CalendarService calendarService;
 
-  @Operation(summary = "Retrieve all Calendars", tags = { "calendars", "get", "filter" })
+  @Operation(summary = "Retrieve all Calendars", tags = { "get", "filter" })
   @ApiResponses({
       @ApiResponse(responseCode = "200", content = {
           @Content(schema = @Schema(implementation = CalendarModel.class), mediaType = "application/json") }),

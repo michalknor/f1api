@@ -24,8 +24,12 @@ public class Version implements Identifiable {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @OneToOne(mappedBy = "version", cascade = CascadeType.ALL)
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "season_id")
     private Season season;
+
+    @OneToMany(mappedBy = "version", cascade = CascadeType.ALL)
+    private List<GrandPrix> grandPrixes;
 
     @Column(nullable = false)
     private LocalDateTime created;
@@ -65,7 +69,7 @@ public class Version implements Identifiable {
     }
 
     public void removeDuplicity() {
-        List<GrandPrix> grandPrixes = season.getGrandPrixes();
+        List<GrandPrix> grandPrixes = this.getGrandPrixes();
 
         for (int i = 0; i < grandPrixes.size(); i++) {
             GrandPrix grandPrixI = grandPrixes.get(i);
@@ -90,8 +94,26 @@ public class Version implements Identifiable {
                 if (!grandPrixJ.getCircuit().getName().equals(grandPrixI.getCircuit().getName())) {
                     continue;
                 }
+
                 grandPrixJ.setCircuit(grandPrixI.getCircuit());
             }
         }
+    }
+
+
+
+    @Override
+    public String toString() {
+        String grandPrixesConcated = "";
+        if (grandPrixes == null || grandPrixes.isEmpty()) {
+            grandPrixesConcated = "null";
+        } else {
+            for (GrandPrix grandPrix : grandPrixes) {
+                grandPrixesConcated += grandPrix + ", ";
+            }
+            grandPrixesConcated = grandPrixesConcated.substring(0, grandPrixesConcated.length() - 3);
+        }
+
+        return String.format("Season(id='%s', created='%s', grandPrixes=[%s])", id, created, grandPrixesConcated);
     }
 }

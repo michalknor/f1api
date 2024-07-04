@@ -1,25 +1,22 @@
 package sk.f1api.f1api.model;
 
 import lombok.Getter;
-import lombok.Setter;
+import sk.f1api.f1api.entity.GrandPrix;
 
 @Getter
-@Setter
 public class GrandPrixModel {
-	
 
-    private Byte round;
+	private String name;
 
-    private String name;
+	private boolean cancelled;
 
-    private boolean cancelled;
+	private LocationModel location;
 
-	public GrandPrixModel(sk.f1api.f1api.entity.GrandPrix grandPrix) {
-		this.round = grandPrix.getRound();
+	public GrandPrixModel(GrandPrix grandPrix) {
 		this.name = grandPrix.getName();
 		this.cancelled = grandPrix.isCancelled();
 
-		System.out.println(grandPrix.getEvents());
+		this.location = new LocationModel(grandPrix.getCircuit());
 	}
 
 }
