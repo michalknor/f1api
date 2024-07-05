@@ -7,17 +7,22 @@ import org.hibernate.Session;
 import jakarta.persistence.*;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.JoinType;
+import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import lombok.Getter;
 import lombok.Setter;
+
+import sk.f1api.f1api.util.CriteriaUtil;
+import sk.f1api.f1api.util.CriteriaUtil.CriteriaComponents;
 
 @Getter
 @Setter
 @Entity
 public class Season implements Identifiable {
 
-	@Id
+    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
@@ -34,24 +39,54 @@ public class Season implements Identifiable {
         Root<EventType> root = criteria.from(EventType.class);
 
         criteria.select(root).where(
-            cb.and(
-                cb.equal(root.get("year"), year)
-            )
-        );
+                cb.and(
+                        cb.equal(root.get("year"), year)));
 
         return session.createQuery(criteria).getMaxResults() > 0;
     }
 
-    public static List<Season> loadAll(Session session) {
-        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
-        CriteriaQuery<Season> criteriaQuery = criteriaBuilder.createQuery(Season.class);
-        Root<Season> root = criteriaQuery.from(Season.class);
+    private static List<Season> load(Session session, CriteriaBuilder criteriaBuilder,
+            CriteriaQuery<Season> criteriaQuery, Root<Season> root, Predicate predicate, Integer versionId) {
+        if (versionId == null) {
+            if (predicate == null) {
+                criteriaQuery.select(root);
+                return session.createQuery(criteriaQuery).getResultList();
+            }
+
+            criteriaQuery.select(root).where(predicate);
+
+            return session.createQuery(criteriaQuery).getResultList();
+        }
 
         root.fetch("versions", JoinType.LEFT);
 
-        criteriaQuery.select(root);
+        Join<Season, Version> versionJoin = root.join("versions");
+
+        Predicate versionPredicate = criteriaBuilder.equal(versionJoin.get("id"), versionId);
+
+        if (predicate != null) {
+            versionPredicate = criteriaBuilder.and(predicate, versionPredicate);
+        }
+
+        criteriaQuery.select(root).where(criteriaBuilder.and(versionPredicate));
 
         return session.createQuery(criteriaQuery).getResultList();
+    }
+
+    public static List<Season> loadAll(Session session, int versionId) {
+        CriteriaComponents<Season> criteriaComponents = CriteriaUtil.getCriteriaComponents(session, Season.class);
+
+        return load(session, criteriaComponents.getCriteriaBuilder(), criteriaComponents.getCriteriaQuery(),
+                criteriaComponents.getRoot(), null, versionId);
+    }
+
+    public static List<Season> loadByYear(Session session, int versionId, int year) {
+        CriteriaComponents<Season> criteriaComponents = CriteriaUtil.getCriteriaComponents(session, Season.class);
+
+        return load(session, criteriaComponents.getCriteriaBuilder(), criteriaComponents.getCriteriaQuery(),
+                criteriaComponents.getRoot(),
+                criteriaComponents.getCriteriaBuilder().equal(criteriaComponents.getRoot().get("year"), year),
+                versionId);
     }
 
     @Override

@@ -1,6 +1,5 @@
 package sk.f1api.f1api.controller;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,18 +35,22 @@ public class CalendarController {
           @Content(schema = @Schema(implementation = CalendarModel.class), mediaType = "application/json") }),
       @ApiResponse(responseCode = "204", description = "There are no Calendars", content = {
           @Content(schema = @Schema()) }),
+      @ApiResponse(responseCode = "400", description = "Invalid Parameter", content = {
+          @Content(schema = @Schema()) }),
       @ApiResponse(responseCode = "500", content = {
           @Content(schema = @Schema()) })
   })
   @GetMapping("/calendars")
-  public ResponseEntity<List<CalendarModel>> getAllCalendars(@RequestParam(required = false) String year) {
+  public ResponseEntity<List<CalendarModel>> getAllCalendars(@RequestParam(required = false) Integer version, @RequestParam(required = false) Integer year) {
     try {
-      List<CalendarModel> calendars = new ArrayList<CalendarModel>();
-      calendarService.loadAll();
+      // calendarService.find(version, year);
+      List<CalendarModel> calendars = calendarService.find(version, year);
 
-      if (year == null) {
-        calendarService.getCalendars().forEach(calendars::add);
-      }
+      // if (year == null) {
+      //   calendarService.getCalendars().forEach(calendars::add);
+      // } else {
+        // calendarService.findByYear(year).forEach(calendars::add);
+      // }
 
       if (calendars.isEmpty()) {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -55,6 +58,7 @@ public class CalendarController {
 
       return new ResponseEntity<>(calendars, HttpStatus.OK);
     } catch (Exception e) {
+      System.out.println(e.getMessage());
       return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
