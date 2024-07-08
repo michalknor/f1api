@@ -22,30 +22,30 @@ public class CalendarService {
 
   }
 
-  public List<CalendarModel> find(Integer version, Integer year) {
+  public List<CalendarModel> find(Integer currentVersion, Integer year) {
     calendars = new ArrayList<>();
 
-    if (version == null) {
-      version = 1;
+    if (currentVersion == null) {
+      currentVersion = 1;
     }
 
     if (year == null) {
-      loadAll(version).forEach(season -> calendars.add(new CalendarModel(season)));
+      loadAll(currentVersion).forEach(season -> calendars.add(new CalendarModel(season)));
       return calendars;
     }
 
-    loadByYear(version, year).forEach(season -> calendars.add(new CalendarModel(season)));
+    loadByYear(currentVersion, year).forEach(season -> calendars.add(new CalendarModel(season)));
     return calendars;
   }
 
-	private List<Season> loadAll(int version) {
-		List<Season> seasons = Season.loadAll(HibernateUtil.getSessionFactory().openSession(), version);
+	private List<Season> loadAll(int currentVersion) {
+		List<Season> seasons = Season.loadAll(HibernateUtil.getSessionFactory().openSession(), currentVersion);
 
 		return seasons;
 	}
 
-	private List<Season> loadByYear(int version, int year) {
-		List<Season> seasons = Season.loadByYear(HibernateUtil.getSessionFactory().openSession(), version, year);
+	private List<Season> loadByYear(int currentVersion, int year) {
+		List<Season> seasons = Season.loadByYear(HibernateUtil.getSessionFactory().openSession(), currentVersion, year);
 
 		return seasons;
 	}

@@ -100,9 +100,7 @@ public class Calendar extends AbstractParser {
 			case "Šprint" -> "S";
 			case "Kvalifikácia" -> "Q";
 			case "Preteky" -> "R";
-			default -> {
-				yield "?";
-			}
+			default -> "?";
 		};
 	}
 }

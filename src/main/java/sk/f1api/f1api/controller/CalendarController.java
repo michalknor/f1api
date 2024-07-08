@@ -41,16 +41,10 @@ public class CalendarController {
           @Content(schema = @Schema()) })
   })
   @GetMapping("/calendars")
-  public ResponseEntity<List<CalendarModel>> getAllCalendars(@RequestParam(required = false) Integer version, @RequestParam(required = false) Integer year) {
+  public ResponseEntity<List<CalendarModel>> getAllCalendars(@RequestParam(required = false) Integer currentVersion,
+      @RequestParam(required = false) Integer year) {
     try {
-      // calendarService.find(version, year);
-      List<CalendarModel> calendars = calendarService.find(version, year);
-
-      // if (year == null) {
-      //   calendarService.getCalendars().forEach(calendars::add);
-      // } else {
-        // calendarService.findByYear(year).forEach(calendars::add);
-      // }
+      List<CalendarModel> calendars = calendarService.find(currentVersion, year);
 
       if (calendars.isEmpty()) {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

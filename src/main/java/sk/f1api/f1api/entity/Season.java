@@ -46,8 +46,8 @@ public class Season implements Identifiable {
     }
 
     private static List<Season> load(Session session, CriteriaBuilder criteriaBuilder,
-            CriteriaQuery<Season> criteriaQuery, Root<Season> root, Predicate predicate, Integer versionId) {
-        if (versionId == null) {
+            CriteriaQuery<Season> criteriaQuery, Root<Season> root, Predicate predicate, Integer currentVersionId) {
+        if (currentVersionId == null) {
             if (predicate == null) {
                 criteriaQuery.select(root);
                 return session.createQuery(criteriaQuery).getResultList();
@@ -62,7 +62,7 @@ public class Season implements Identifiable {
 
         Join<Season, Version> versionJoin = root.join("versions");
 
-        Predicate versionPredicate = criteriaBuilder.equal(versionJoin.get("id"), versionId);
+        Predicate versionPredicate = criteriaBuilder.greaterThan(versionJoin.get("id"), currentVersionId);
 
         if (predicate != null) {
             versionPredicate = criteriaBuilder.and(predicate, versionPredicate);
@@ -73,20 +73,28 @@ public class Season implements Identifiable {
         return session.createQuery(criteriaQuery).getResultList();
     }
 
-    public static List<Season> loadAll(Session session, int versionId) {
-        CriteriaComponents<Season> criteriaComponents = CriteriaUtil.getCriteriaComponents(session, Season.class);
-
-        return load(session, criteriaComponents.getCriteriaBuilder(), criteriaComponents.getCriteriaQuery(),
-                criteriaComponents.getRoot(), null, versionId);
+    private static List<Season> load(Session session, CriteriaBuilder criteriaBuilder,
+            CriteriaQuery<Season> criteriaQuery, Root<Season> root, Integer currentVersionId) {
+        return load(session, criteriaBuilder, criteriaQuery, root, null, currentVersionId);
     }
 
-    public static List<Season> loadByYear(Session session, int versionId, int year) {
+    public static List<Season> loadAll(Session session, int currentVersionId) {
         CriteriaComponents<Season> criteriaComponents = CriteriaUtil.getCriteriaComponents(session, Season.class);
 
         return load(session, criteriaComponents.getCriteriaBuilder(), criteriaComponents.getCriteriaQuery(),
+                criteriaComponents.getRoot(), currentVersionId);
+    }
+
+    public static List<Season> loadByYear(Session session, int currentVersionId, int year) {
+        CriteriaComponents<Season> criteriaComponents = CriteriaUtil.getCriteriaComponents(session, Season.class);
+
+        return load(
+                session,
+                criteriaComponents.getCriteriaBuilder(),
+                criteriaComponents.getCriteriaQuery(),
                 criteriaComponents.getRoot(),
                 criteriaComponents.getCriteriaBuilder().equal(criteriaComponents.getRoot().get("year"), year),
-                versionId);
+                currentVersionId);
     }
 
     @Override
