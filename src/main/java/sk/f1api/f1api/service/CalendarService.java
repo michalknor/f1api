@@ -26,7 +26,7 @@ public class CalendarService {
     calendars = new ArrayList<>();
 
     if (currentVersion == null) {
-      currentVersion = 1;
+      currentVersion = 0;
     }
 
     if (year == null) {

@@ -33,6 +33,6 @@ public class OpenAPIConfig {
         .contact(contact)
         .description("This API exposes endpoints to show calendars.");
 
-    return new OpenAPI().info(info).servers(List.of(prodServer));
+    return new OpenAPI().info(info);//.servers(List.of(prodServer));
   }
 }
