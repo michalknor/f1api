@@ -100,8 +100,6 @@ public class Version implements Identifiable {
         }
     }
 
-
-
     @Override
     public String toString() {
         String grandPrixesConcated = "";

@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import sk.f1api.f1api.model.CalendarModel;
+import sk.f1api.f1api.model.GrandPrixModel;
 import sk.f1api.f1api.service.GrandPrixService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -20,16 +21,15 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @Tag(name = "GrandPrix", description = "GrandPrix management APIs")
 @RestController
-public class GrandPrixController
- {
+public class GrandPrixController {
 	@Autowired
 	GrandPrixService grandPrixService;
 
-	@Operation(summary = "Retrieve all GrandPrixes", tags = { "get", "filter" })
+	@Operation(summary = "Retrieve GrandPrix", tags = { "get", "filter" })
 	@ApiResponses({
 			@ApiResponse(responseCode = "200", content = {
 					@Content(schema = @Schema(implementation = CalendarModel.class), mediaType = "application/json") }),
-			@ApiResponse(responseCode = "204", description = "There are no GrandPrixes", content = {
+			@ApiResponse(responseCode = "204", description = "There is no GrandPrix", content = {
 					@Content(schema = @Schema()) }),
 			@ApiResponse(responseCode = "400", description = "Invalid Parameter", content = {
 					@Content(schema = @Schema()) }),
@@ -37,16 +37,16 @@ public class GrandPrixController
 					@Content(schema = @Schema()) })
 	})
 	@GetMapping("/grandprix")
-	public ResponseEntity<List<CalendarModel>> getAllCalendars(@RequestParam(required = false) Integer currentVersion,
-			@RequestParam(required = false) Integer year) {
+	public ResponseEntity<GrandPrixModel> getAllCalendars(@RequestParam(required = false) Integer currentVersion,
+			@RequestParam(required = true) int year, @RequestParam(required = true) int round) {
 		try {
-			List<CalendarModel> grandPrixes = grandPrixService.find(currentVersion, year);
+			GrandPrixModel grandPrix = grandPrixService.find(currentVersion, year, round);
 
-			if (grandPrixes.isEmpty()) {
+			if (grandPrix == null) {
 				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 			}
 
-			return new ResponseEntity<>(grandPrixes, HttpStatus.OK);
+			return new ResponseEntity<>(grandPrix, HttpStatus.OK);
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

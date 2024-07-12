@@ -16,38 +16,30 @@ import sk.f1api.f1api.util.HibernateUtil;
 @Getter
 public class CalendarService {
 
-  private List<CalendarModel> calendars;
+	private List<CalendarModel> calendars;
 
-  public CalendarService() {
+	public CalendarService() {
 
-  }
-
-  public List<CalendarModel> find(Integer currentVersion, Integer year) {
-    calendars = new ArrayList<>();
-
-    if (currentVersion == null) {
-      currentVersion = 0;
-    }
-
-    if (year == null) {
-      loadAll(currentVersion).forEach(season -> calendars.add(new CalendarModel(season)));
-      return calendars;
-    }
-
-    loadByYear(currentVersion, year).forEach(season -> calendars.add(new CalendarModel(season)));
-    return calendars;
-  }
-
-	private List<Season> loadAll(int currentVersion) {
-		List<Season> seasons = Season.loadAll(HibernateUtil.getSessionFactory().openSession(), currentVersion);
-
-		return seasons;
 	}
 
-	private List<Season> loadByYear(int currentVersion, int year) {
-		List<Season> seasons = Season.loadByYear(HibernateUtil.getSessionFactory().openSession(), currentVersion, year);
+	public List<CalendarModel> find(Integer currentVersion, Integer year) {
+		calendars = new ArrayList<>();
 
-		return seasons;
+		if (year == null) {
+			loadAll(currentVersion).forEach(season -> calendars.add(new CalendarModel(season)));
+			return calendars;
+		}
+
+		loadByYear(currentVersion, year).forEach(season -> calendars.add(new CalendarModel(season)));
+		return calendars;
+	}
+
+	private List<Season> loadAll(Integer currentVersion) {
+		return Season.loadAll(HibernateUtil.getSessionFactory().openSession(), currentVersion);
+	}
+
+	private List<Season> loadByYear(Integer currentVersion, int year) {
+		return Season.loadByYear(HibernateUtil.getSessionFactory().openSession(), currentVersion, year);
 	}
 
 }

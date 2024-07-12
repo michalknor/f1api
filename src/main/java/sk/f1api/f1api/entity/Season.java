@@ -78,7 +78,7 @@ public class Season implements Identifiable {
         return load(session, criteriaBuilder, criteriaQuery, root, null, currentVersionId);
     }
 
-    public static List<Season> loadAll(Session session, int currentVersionId) {
+    public static List<Season> loadAll(Session session, Integer currentVersionId) {
         CriteriaComponents<Season> criteriaComponents = CriteriaUtil.getCriteriaComponents(session, Season.class);
 
         return load(session, criteriaComponents.getCriteriaBuilder(), criteriaComponents.getCriteriaQuery(),
