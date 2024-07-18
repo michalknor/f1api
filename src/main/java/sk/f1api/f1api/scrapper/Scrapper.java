@@ -1,15 +1,12 @@
 package sk.f1api.f1api.scrapper;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.nio.file.Paths;
 import java.util.AbstractMap;
 import java.util.Map;
-import java.util.Properties;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -26,15 +23,14 @@ import sk.f1api.f1api.scrapper.parser.Wiki;
 import sk.f1api.f1api.util.HibernateUtil;
 
 public class Scrapper {
-	public static void main(String[] args) {
+	public static void scrape(String urlCalendar, String urlWiki) {
 		EventType.fillTable(HibernateUtil.getSessionFactory().openSession());
 
 		short year = 2024;
-
-		Wiki f1Wiki = new Wiki();
-		f1Wiki.saveToFile("wiki.html");
 		
-		Calendar f1Calendar = new Calendar();
+		Calendar f1Calendar = new Calendar(urlCalendar);
+
+		Wiki f1Wiki = new Wiki(urlWiki);
 
 		Season season = new Season();
 		season.setYear(year);
@@ -94,19 +90,5 @@ public class Scrapper {
 		}
 
 		return new AbstractMap.SimpleEntry<>(-1, null);
-	}
-
-	public static String getValueOfKeyFromProperties(String node) {
-		try (FileInputStream input = new FileInputStream(
-                Paths.get("src", "main", "resources", "scrapper.properties").toString())) {
-			Properties dbProperties = new Properties();
-            dbProperties.load(input);
-
-            return dbProperties.getProperty(node);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-		return "";
 	}
 }

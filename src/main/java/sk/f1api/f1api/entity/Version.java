@@ -20,98 +20,98 @@ import java.time.LocalDateTime;
 @Entity
 public class Version implements Identifiable {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private int id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "season_id")
-    private Season season;
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "season_id")
+	private Season season;
 
-    @OneToMany(mappedBy = "version", cascade = CascadeType.ALL)
-    private List<GrandPrix> grandPrixes;
+	@OneToMany(mappedBy = "version", cascade = CascadeType.ALL)
+	private List<GrandPrix> grandPrixes;
 
-    @Column(nullable = false)
-    private LocalDateTime created;
+	@Column(nullable = false)
+	private LocalDateTime created;
 
-    @PrePersist
-    protected void onCreate() {
-        created = LocalDateTime.now();
-    }
+	@PrePersist
+	protected void onCreate() {
+		created = LocalDateTime.now();
+	}
 
-    @Override
-    public boolean isDuplicate(Session session) {
-        CriteriaBuilder cb = session.getCriteriaBuilder();
-        CriteriaQuery<EventType> criteria = cb.createQuery(EventType.class);
-        Root<EventType> root = criteria.from(EventType.class);
+	@Override
+	public boolean isDuplicate(Session session) {
+		CriteriaBuilder cb = session.getCriteriaBuilder();
+		CriteriaQuery<EventType> criteria = cb.createQuery(EventType.class);
+		Root<EventType> root = criteria.from(EventType.class);
 
-        criteria.select(root).where(cb.equal(root.get("id"), id));
+		criteria.select(root).where(cb.equal(root.get("id"), id));
 
-        List<EventType> sessionTypes = session.createQuery(criteria).getResultList();
+		List<EventType> sessionTypes = session.createQuery(criteria).getResultList();
 
-        return sessionTypes.size() == 1;
-    }
+		return sessionTypes.size() == 1;
+	}
 
-    public void save(Session session) {
-        Transaction tx = null;
-        try {
-            tx = session.beginTransaction();
-            session.persist(this);
-            tx.commit();
-        } catch (HibernateException e) {
-            if (tx != null) {
-                tx.rollback();
-            }
-            e.printStackTrace();
-        } finally {
-            session.close();
-        }
-    }
+	public void save(Session session) {
+		Transaction tx = null;
+		try {
+			tx = session.beginTransaction();
+			session.persist(this);
+			tx.commit();
+		} catch (HibernateException e) {
+			if (tx != null) {
+				tx.rollback();
+			}
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
+	}
 
-    public void removeDuplicity() {
-        List<GrandPrix> grandPrixes = this.getGrandPrixes();
+	public void removeDuplicity() {
+		List<GrandPrix> grandPrixes = this.getGrandPrixes();
 
-        for (int i = 0; i < grandPrixes.size(); i++) {
-            GrandPrix grandPrixI = grandPrixes.get(i);
+		for (int i = 0; i < grandPrixes.size(); i++) {
+			GrandPrix grandPrixI = grandPrixes.get(i);
 
-            for (int j = i + 1; j < grandPrixes.size(); j++) {
-                GrandPrix grandPrixJ = grandPrixes.get(j);
+			for (int j = i + 1; j < grandPrixes.size(); j++) {
+				GrandPrix grandPrixJ = grandPrixes.get(j);
 
-                if (!grandPrixJ.getCircuit().getCity().getCountry().getAbbreviation()
-                        .equals(grandPrixI.getCircuit().getCity().getCountry().getAbbreviation())) {
-                    continue;
-                }
+				if (!grandPrixJ.getCircuit().getCity().getCountry().getAbbreviation()
+						.equals(grandPrixI.getCircuit().getCity().getCountry().getAbbreviation())) {
+					continue;
+				}
 
-                grandPrixJ.getCircuit().getCity().setCountry(grandPrixI.getCircuit().getCity().getCountry());
+				grandPrixJ.getCircuit().getCity().setCountry(grandPrixI.getCircuit().getCity().getCountry());
 
-                if (!grandPrixJ.getCircuit().getCity().getName()
-                        .equals(grandPrixI.getCircuit().getCity().getName())) {
-                    continue;
-                }
+				if (!grandPrixJ.getCircuit().getCity().getName()
+						.equals(grandPrixI.getCircuit().getCity().getName())) {
+					continue;
+				}
 
-                grandPrixJ.getCircuit().setCity(grandPrixI.getCircuit().getCity());
+				grandPrixJ.getCircuit().setCity(grandPrixI.getCircuit().getCity());
 
-                if (!grandPrixJ.getCircuit().getName().equals(grandPrixI.getCircuit().getName())) {
-                    continue;
-                }
+				if (!grandPrixJ.getCircuit().getName().equals(grandPrixI.getCircuit().getName())) {
+					continue;
+				}
 
-                grandPrixJ.setCircuit(grandPrixI.getCircuit());
-            }
-        }
-    }
+				grandPrixJ.setCircuit(grandPrixI.getCircuit());
+			}
+		}
+	}
 
-    @Override
-    public String toString() {
-        String grandPrixesConcated = "";
-        if (grandPrixes == null || grandPrixes.isEmpty()) {
-            grandPrixesConcated = "null";
-        } else {
-            for (GrandPrix grandPrix : grandPrixes) {
-                grandPrixesConcated += grandPrix + ", ";
-            }
-            grandPrixesConcated = grandPrixesConcated.substring(0, grandPrixesConcated.length() - 3);
-        }
+	@Override
+	public String toString() {
+		String grandPrixesConcated = "";
+		if (grandPrixes == null || grandPrixes.isEmpty()) {
+			grandPrixesConcated = "null";
+		} else {
+			for (GrandPrix grandPrix : grandPrixes) {
+				grandPrixesConcated += grandPrix + ", ";
+			}
+			grandPrixesConcated = grandPrixesConcated.substring(0, grandPrixesConcated.length() - 3);
+		}
 
-        return String.format("Season(id='%s', created='%s', grandPrixes=[%s])", id, created, grandPrixesConcated);
-    }
+		return String.format("Season(id='%s', created='%s', grandPrixes=[%s])", id, created, grandPrixesConcated);
+	}
 }

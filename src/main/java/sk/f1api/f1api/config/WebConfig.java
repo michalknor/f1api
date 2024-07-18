@@ -7,8 +7,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-    @Override
-    public void configurePathMatch(@SuppressWarnings("null") PathMatchConfigurer configurer) {
-        configurer.addPathPrefix("/api", cls -> cls.getPackage().getName().equals("sk.f1api.f1api.controller"));
-    }
+	@Override
+	public void configurePathMatch(@SuppressWarnings("null") PathMatchConfigurer configurer) {
+		configurer.addPathPrefix("/api", cls -> cls.getPackage().getName().equals("sk.f1api.f1api.controller"));
+	}
 }

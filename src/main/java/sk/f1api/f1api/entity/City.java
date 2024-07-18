@@ -10,22 +10,22 @@ import lombok.Setter;
 public class City {
 
 	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private int id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "country_id")
-    private Country country;
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "country_id")
+	private Country country;
 
-    @Column(nullable = false, length = 50)
-    private String name;
+	@Column(nullable = false, length = 50)
+	private String name;
 
-    public City() {
-        country = new Country();
-    }
+	public City() {
+		country = new Country();
+	}
 
-    @Override
-    public String toString() {
-        return "City(id='" + id + "', name='" + name + "', country=" + country + ")";
-    }
+	@Override
+	public String toString() {
+		return "City(id='" + id + "', name='" + name + "', country=" + country + ")";
+	}
 }

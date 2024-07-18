@@ -17,30 +17,30 @@ import lombok.Setter;
 public class Country implements Identifiable {
 
 	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private int id;
 
-    @Column(nullable = false, unique = true, columnDefinition="CHAR(2)")
-    private String abbreviation;
+	@Column(nullable = false, unique = true, columnDefinition = "CHAR(2)")
+	private String abbreviation;
 
-    @Column(nullable = false, unique = true, length = 30)
-    private String name;
+	@Column(nullable = false, unique = true, length = 30)
+	private String name;
 
-    @Override
-    public boolean isDuplicate(Session session) {
-        CriteriaBuilder cb = session.getCriteriaBuilder();
-        CriteriaQuery<Country> criteria = cb.createQuery(Country.class);
-        Root<Country> root = criteria.from(Country.class);
+	@Override
+	public boolean isDuplicate(Session session) {
+		CriteriaBuilder cb = session.getCriteriaBuilder();
+		CriteriaQuery<Country> criteria = cb.createQuery(Country.class);
+		Root<Country> root = criteria.from(Country.class);
 
-        criteria.select(root).where(cb.equal(root.get("abbreviation"), abbreviation));
+		criteria.select(root).where(cb.equal(root.get("abbreviation"), abbreviation));
 
-        List<Country> countries = session.createQuery(criteria).getResultList();
+		List<Country> countries = session.createQuery(criteria).getResultList();
 
-        return countries.size() == 1;
-    }
+		return countries.size() == 1;
+	}
 
-    @Override
-    public String toString() {
-        return "Country(id='" + id + "', abbreviation='" + abbreviation + "', name='" + name + "')";
-    }
+	@Override
+	public String toString() {
+		return "Country(id='" + id + "', abbreviation='" + abbreviation + "', name='" + name + "')";
+	}
 }

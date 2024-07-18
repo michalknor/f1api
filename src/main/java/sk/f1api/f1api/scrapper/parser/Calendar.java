@@ -4,7 +4,6 @@ import sk.f1api.f1api.entity.Country;
 import sk.f1api.f1api.entity.Event;
 import sk.f1api.f1api.entity.EventType;
 import sk.f1api.f1api.entity.GrandPrix;
-import sk.f1api.f1api.scrapper.Scrapper;
 import sk.f1api.f1api.util.HibernateUtil;
 
 import java.util.List;
@@ -22,30 +21,31 @@ import lombok.Setter;
 @Getter
 public class Calendar extends AbstractParser {
 
-    public Calendar() {
-		super(Scrapper.getDocument(Scrapper.getValueOfKeyFromProperties("url.calendar")));
-        mainContent = document
-                .select("""
-                        body >
-                        div >
-                        main >
-                        div >
-                        div
-                        """).first();
-		
+	public Calendar(String url) {
+		super(url);
+		mainContent = document
+				.select("""
+						body >
+						div >
+						main >
+						div >
+						div
+						""").first();
+
 		String lastRace = mainContent.lastElementChild().select("div > section > div > div > h4").first().html();
 		numberOfRaces = Integer.parseInt(lastRace.substring(0, lastRace.indexOf(".")));
-    }
+	}
 
 	public void fillEvents(GrandPrix grandPrix, int race) {
-        if (race <= 0 || race > numberOfRaces) {
-            return;
-        }
+		if (race <= 0 || race > numberOfRaces) {
+			return;
+		}
 
 		List<Event> events = new ArrayList<>();
-		
-		Elements scheduleTable = mainContent.select("div:nth-of-type(" + (race + 1) + ") > section > table > tbody > tr");
-		
+
+		Elements scheduleTable = mainContent
+				.select("div:nth-of-type(" + (race + 1) + ") > section > table > tbody > tr");
+
 		DateTimeFormatter dateTimeFormatterFrom = DateTimeFormatter.ofPattern("yyyy d. M. HH:mm");
 		DateTimeFormatter dateTimeFormatterTo = DateTimeFormatter.ofPattern("yyyy d. M. - HH:mm");
 
@@ -58,11 +58,13 @@ public class Calendar extends AbstractParser {
 
 			event.setGrandPrix(grandPrix);
 			event.setRound((byte) (i + 1));
-			event.setTimeFrom(LocalDateTime.parse("2024 " + eventInfo.get(1).text() + " " + times.first().text(), dateTimeFormatterFrom));
+			event.setTimeFrom(LocalDateTime.parse("2024 " + eventInfo.get(1).text() + " " + times.first().text(),
+					dateTimeFormatterFrom));
 
 			System.out.println(event.getTimeFrom());
 			if (times.size() == 2) {
-				event.setTimeTo(LocalDateTime.parse("2024 " + eventInfo.get(1).text() + " " + times.get(1).text(), dateTimeFormatterTo));
+				event.setTimeTo(LocalDateTime.parse("2024 " + eventInfo.get(1).text() + " " + times.get(1).text(),
+						dateTimeFormatterTo));
 			}
 
 			EventType eventType = new EventType();
@@ -75,12 +77,12 @@ public class Calendar extends AbstractParser {
 		}
 
 		grandPrix.setEvents(events);
-    }
+	}
 
 	public void fillCountry(Country country, int race) {
-        if (race <= 0 || race > numberOfRaces) {
-            return;
-        }
+		if (race <= 0 || race > numberOfRaces) {
+			return;
+		}
 
 		Element f1Races = mainContent.select("div:nth-of-type(" + (race + 1) + ") > section > div > div > img").first();
 
@@ -89,7 +91,7 @@ public class Calendar extends AbstractParser {
 		abbreviation = abbreviation.substring(indexFrom, indexFrom + 2);
 
 		country.setAbbreviation(abbreviation);
-    }
+	}
 
 	public static String getAbbreviationForEventName(String eventName) {
 		return switch (eventName) {

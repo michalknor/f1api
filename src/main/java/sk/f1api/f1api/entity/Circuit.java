@@ -10,22 +10,22 @@ import lombok.Setter;
 public class Circuit {
 
 	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private int id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "city_id")
-    private City city;
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "city_id")
+	private City city;
 
-    @Column(nullable = false, unique = true, length = 50)
-    private String name;
+	@Column(nullable = false, unique = true, length = 50)
+	private String name;
 
-    public Circuit() {
-        city = new City();
-    }
+	public Circuit() {
+		city = new City();
+	}
 
-    @Override
-    public String toString() {
-        return "Country(id='" + id + "', name='" + name + "', city=" + city + ")";
-    }
+	@Override
+	public String toString() {
+		return "Country(id='" + id + "', name='" + name + "', city=" + city + ")";
+	}
 }

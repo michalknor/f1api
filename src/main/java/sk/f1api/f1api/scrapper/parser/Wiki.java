@@ -4,7 +4,6 @@ import sk.f1api.f1api.entity.Circuit;
 import sk.f1api.f1api.entity.City;
 import sk.f1api.f1api.entity.Country;
 import sk.f1api.f1api.entity.GrandPrix;
-import sk.f1api.f1api.scrapper.Scrapper;
 
 import org.jsoup.nodes.Element;
 
@@ -14,103 +13,103 @@ import lombok.Setter;
 @Setter
 @Getter
 public class Wiki extends AbstractParser {
-    public Wiki() {
-		super(Scrapper.getDocument(Scrapper.getValueOfKeyFromProperties("url.wiki")));
-        
-        mainContent = document
-                .select("""
-                        body >
-                        div:nth-of-type(2) >
-                        div >
-                        div:nth-of-type(3) >
-                        main >
-                        div:nth-of-type(3) >
-                        div:nth-of-type(3) >
-                        div >
-                        table:nth-of-type(3) >
-                        tbody
-                        """).first();
+	public Wiki(String url) {
+		super(url);
 
-        numberOfRaces = 0;
-        while (true) {
-            try {
-                numberOfRaces = Integer
-                        .parseInt(mainContent.select("tr:nth-of-type(" + (numberOfRaces + 2) + ") > th").html());
-            } catch (Exception e) {
-                break;
-            }
-        }
-    }
+		mainContent = document
+				.select("""
+						body >
+						div:nth-of-type(2) >
+						div >
+						div:nth-of-type(3) >
+						main >
+						div:nth-of-type(3) >
+						div:nth-of-type(3) >
+						div >
+						table:nth-of-type(3) >
+						tbody
+						""").first();
 
-    public void fillGrandPrix(GrandPrix grandPrix, int race) {
-        if (race <= 0 || race > numberOfRaces) {
-            return;
-        }
+		numberOfRaces = 0;
+		while (true) {
+			try {
+				numberOfRaces = Integer
+						.parseInt(mainContent.select("tr:nth-of-type(" + (numberOfRaces + 2) + ") > th").html());
+			} catch (Exception e) {
+				break;
+			}
+		}
+	}
 
-        Element td = mainContent.select("tr:nth-of-type(" + (race + 1) + ") > td").first();
-        Element grandPrixNameElement = td.select(":root > a").first();
-        String GrandPrixName;
+	public void fillGrandPrix(GrandPrix grandPrix, int race) {
+		if (race <= 0 || race > numberOfRaces) {
+			return;
+		}
 
-        if (grandPrixNameElement != null) {
-            GrandPrixName = grandPrixNameElement.text();
-        } else {
-            GrandPrixName = td.select(":root > span > a").first().text();
-        }
+		Element td = mainContent.select("tr:nth-of-type(" + (race + 1) + ") > td").first();
+		Element grandPrixNameElement = td.select(":root > a").first();
+		String GrandPrixName;
 
-        grandPrix.setName(GrandPrixName.replace(" Grand Prix", ""));
+		if (grandPrixNameElement != null) {
+			GrandPrixName = grandPrixNameElement.text();
+		} else {
+			GrandPrixName = td.select(":root > span > a").first().text();
+		}
 
-        return;
-    }
+		grandPrix.setName(GrandPrixName.replace(" Grand Prix", ""));
 
-    public void fillCircuit(Circuit circuit, int race) {
-        if (race <= 0 || race > numberOfRaces) {
-            return;
-        }
+		return;
+	}
 
-        Element td = mainContent.select("tr:nth-of-type(" + (race + 1) + ") > td:nth-of-type(2)").first();
-        Element circuitName = td.select(":root > a").first();
+	public void fillCircuit(Circuit circuit, int race) {
+		if (race <= 0 || race > numberOfRaces) {
+			return;
+		}
 
-        if (circuitName != null) {
-            circuit.setName(circuitName.text());
+		Element td = mainContent.select("tr:nth-of-type(" + (race + 1) + ") > td:nth-of-type(2)").first();
+		Element circuitName = td.select(":root > a").first();
 
-            return;
-        }
+		if (circuitName != null) {
+			circuit.setName(circuitName.text());
 
-        circuit.setName(td.select(":root > span > a:nth-of-type(2)").first().text());
+			return;
+		}
 
-        return;
-    }
+		circuit.setName(td.select(":root > span > a:nth-of-type(2)").first().text());
 
-    public void fillCity(City city, int race) {
-        if (race <= 0 || race > numberOfRaces) {
-            return;
-        }
+		return;
+	}
 
-        Element td = mainContent.select("tr:nth-of-type(" + (race + 1) + ") > td:nth-of-type(2)").first();
-        Element location = td.select(":root > a:nth-of-type(2)").first();
+	public void fillCity(City city, int race) {
+		if (race <= 0 || race > numberOfRaces) {
+			return;
+		}
 
-        if (location != null) {
-            city.setName(location.text());
+		Element td = mainContent.select("tr:nth-of-type(" + (race + 1) + ") > td:nth-of-type(2)").first();
+		Element location = td.select(":root > a:nth-of-type(2)").first();
 
-            return;
-        }
+		if (location != null) {
+			city.setName(location.text());
 
-        String locationHtml = td.select(":root > span > a").html();
-        city.setName(locationHtml.substring(locationHtml.indexOf(",") + 2, locationHtml.length()));
+			return;
+		}
 
-        return;
-    }
+		String locationHtml = td.select(":root > span > a").html();
+		city.setName(locationHtml.substring(locationHtml.indexOf(",") + 2, locationHtml.length()));
 
-    public void fillCountry(Country country, int race) {
-        if (race <= 0 || race > numberOfRaces) {
-            return;
-        }
+		return;
+	}
 
-        Element f1Races = mainContent.select("tr:nth-of-type(" + (race + 1) + ")").first();
-        Element imgElements = f1Races.select("img").first();
+	public void fillCountry(Country country, int race) {
+		if (race <= 0 || race > numberOfRaces) {
+			return;
+		}
 
-        country.setName(imgElements.attr("alt"));
+		Element f1Races = mainContent.select("tr:nth-of-type(" + (race + 1) + ")").first();
+		Element imgElements = f1Races.select("img").first();
 
-        return;
-    }
+		country.setName(imgElements.attr("alt"));
+
+		return;
+	}
 }

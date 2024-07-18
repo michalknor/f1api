@@ -19,49 +19,50 @@ import java.time.LocalDateTime;
 public class Event implements Identifiable {
 
 	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private int id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "grand_prix_id")
-    private GrandPrix grandPrix;
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "grand_prix_id")
+	private GrandPrix grandPrix;
 
-    @ManyToOne
-    @JoinColumn(name = "event_type_id")
-    private EventType eventType;
+	@ManyToOne
+	@JoinColumn(name = "event_type_id")
+	private EventType eventType;
 
-    @Column(nullable = false)
-    private Byte round;
+	@Column(nullable = false)
+	private Byte round;
 
-    @Column(nullable = false, name = "time_from")
-    private LocalDateTime timeFrom;
+	@Column(nullable = false, name = "time_from")
+	private LocalDateTime timeFrom;
 
-    @Column(name = "time_to")
-    private LocalDateTime timeTo;
+	@Column(name = "time_to")
+	private LocalDateTime timeTo;
 
-    @Override
-    public boolean isDuplicate(Session session) {
-        CriteriaBuilder cb = session.getCriteriaBuilder();
-        CriteriaQuery<Event> criteria = cb.createQuery(Event.class);
-        Root<Event> root = criteria.from(Event.class);
+	@Override
+	public boolean isDuplicate(Session session) {
+		CriteriaBuilder cb = session.getCriteriaBuilder();
+		CriteriaQuery<Event> criteria = cb.createQuery(Event.class);
+		Root<Event> root = criteria.from(Event.class);
 
-        // criteria.select(root).where(
-        //     cb.and(
-        //         cb.equal(root.get("year"), year), 
-        //         cb.equal(root.get("version"), version)
-        //     )
-        // );
+		// criteria.select(root).where(
+		// cb.and(
+		// cb.equal(root.get("year"), year),
+		// cb.equal(root.get("version"), version)
+		// )
+		// );
 
-        CriteriaQuery<Event> searchQuery = cb.createQuery(Event.class);
-        Root<Event> aRoot = searchQuery.from(Event.class);
-        Join<Event, Season> bJoin= aRoot.join("Round", JoinType.LEFT);
-        bJoin.on(cb.equal(bJoin.get("idLanguage"), 22));
+		CriteriaQuery<Event> searchQuery = cb.createQuery(Event.class);
+		Root<Event> aRoot = searchQuery.from(Event.class);
+		Join<Event, Season> bJoin = aRoot.join("Round", JoinType.LEFT);
+		bJoin.on(cb.equal(bJoin.get("idLanguage"), 22));
 
-        return session.createQuery(criteria).getMaxResults() > 0;
-    }
+		return session.createQuery(criteria).getMaxResults() > 0;
+	}
 
-    @Override
-    public String toString() {
-        return String.format("Event(id='%s', round='%s', timeFrom='%s', timeTo='%s', eventType=%s)", id, round, timeFrom, timeTo, eventType);
-    }
+	@Override
+	public String toString() {
+		return String.format("Event(id='%s', round='%s', timeFrom='%s', timeTo='%s', eventType=%s)", id, round,
+				timeFrom, timeTo, eventType);
+	}
 }

@@ -18,89 +18,91 @@ import lombok.Setter;
 @Setter
 @Entity
 @Table(name = "event_type")
-public class EventType  extends AbstractEntity implements Identifiable {
+public class EventType extends AbstractEntity implements Identifiable {
 
 	@Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private int id;
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private int id;
 
-    @Column(nullable = false, unique = true, columnDefinition="VARCHAR(2)")
-    private String abbreviation;
+	@Column(nullable = false, unique = true, columnDefinition = "VARCHAR(2)")
+	private String abbreviation;
 
-    @Column(nullable = false, unique = true, length = 20)
-    private String name;
+	@Column(nullable = false, unique = true, length = 20)
+	private String name;
 
-    public EventType() {
-    }
+	public EventType() {
+	}
 
-    public EventType(String abbreviation, String name) {
-        this.abbreviation = abbreviation;
-        this.name = name;
-    }
+	public EventType(String abbreviation, String name) {
+		this.abbreviation = abbreviation;
+		this.name = name;
+	}
 
-    @Override
-    public boolean isDuplicate(Session session) {
-        CriteriaBuilder cb = session.getCriteriaBuilder();
-        CriteriaQuery<EventType> criteria = cb.createQuery(EventType.class);
-        Root<EventType> root = criteria.from(EventType.class);
+	@Override
+	public boolean isDuplicate(Session session) {
+		CriteriaBuilder cb = session.getCriteriaBuilder();
+		CriteriaQuery<EventType> criteria = cb.createQuery(EventType.class);
+		Root<EventType> root = criteria.from(EventType.class);
 
-        criteria.select(root).where(cb.equal(root.get("abbreviation"), abbreviation));
+		criteria.select(root).where(cb.equal(root.get("abbreviation"), abbreviation));
 
-        List<EventType> sessionTypes = session.createQuery(criteria).getResultList();
+		List<EventType> sessionTypes = session.createQuery(criteria).getResultList();
 
-        return sessionTypes.size() == 1;
-    }
+		return sessionTypes.size() == 1;
+	}
 
-    public static void fillTable(Session session) {
-        Transaction tx = null;
+	public static void fillTable(Session session) {
+		Transaction tx = null;
 
-        try {
-            tx = session.beginTransaction();
+		try {
+			tx = session.beginTransaction();
 
-			List<EventType> sessionTypes = new ArrayList<EventType>() {{
-                add(new EventType("P1", "Practice 1"));
-                add(new EventType("P2", "Practice 2"));
-                add(new EventType("P3", "Practice 3"));
-                add(new EventType("SQ", "Sprint Qualifying"));
-                add(new EventType("S", "Sprint"));
-                add(new EventType("Q", "Qualifying"));
-                add(new EventType("R", "Race"));
-            }};
+			List<EventType> sessionTypes = new ArrayList<EventType>() {
+				{
+					add(new EventType("P1", "Practice 1"));
+					add(new EventType("P2", "Practice 2"));
+					add(new EventType("P3", "Practice 3"));
+					add(new EventType("SQ", "Sprint Qualifying"));
+					add(new EventType("S", "Sprint"));
+					add(new EventType("Q", "Qualifying"));
+					add(new EventType("R", "Race"));
+				}
+			};
 
-            for (EventType sessionType : sessionTypes) {
-                if (sessionType.isDuplicate(session)) {
-                    continue;
-                }
+			for (EventType sessionType : sessionTypes) {
+				if (sessionType.isDuplicate(session)) {
+					continue;
+				}
 				session.persist(sessionType);
-            }
+			}
 
-            tx.commit();
-        } catch (HibernateException e) {
-            if (tx != null) {
-                tx.rollback();
-            }
-            e.printStackTrace();
-        } finally {
-            session.close();
-        }
-    }
+			tx.commit();
+		} catch (HibernateException e) {
+			if (tx != null) {
+				tx.rollback();
+			}
+			e.printStackTrace();
+		} finally {
+			session.close();
+		}
+	}
 
-    public void load(Session session) {
-        CriteriaBuilder cb = session.getCriteriaBuilder();
-        CriteriaQuery<EventType> criteria = cb.createQuery(EventType.class);
-        Root<EventType> root = criteria.from(EventType.class);
+	public void load(Session session) {
+		CriteriaBuilder cb = session.getCriteriaBuilder();
+		CriteriaQuery<EventType> criteria = cb.createQuery(EventType.class);
+		Root<EventType> root = criteria.from(EventType.class);
 
-        criteria.select(root).where(cb.equal(root.get("abbreviation"), abbreviation));
+		criteria.select(root).where(cb.equal(root.get("abbreviation"), abbreviation));
 
-        EventType eventType = session.createQuery(criteria).setMaxResults(1).uniqueResult();
+		EventType eventType = session.createQuery(criteria).setMaxResults(1).uniqueResult();
 
-        if (eventType != null) {
-            this.copy(eventType);
-        }
-    }
+		if (eventType != null) {
+			this.copy(eventType);
+		}
+	}
 
-    @Override
-    public String toString() {
-        return String.format("EventType(id='%s', abbreviation='%s', name='%s')", id, abbreviation, name);
-    }
+	@Override
+	public String toString() {
+		return String.format("EventType(id='%s', abbreviation='%s', name='%s')", id, abbreviation, name);
+	}
 }

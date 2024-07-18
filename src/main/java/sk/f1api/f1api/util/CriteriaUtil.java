@@ -26,11 +26,11 @@ public class CriteriaUtil {
 	}
 
 	public static <T> CriteriaComponents<T> getCriteriaComponents(Session session, Class<T> c) {
-        CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
+		CriteriaBuilder criteriaBuilder = session.getCriteriaBuilder();
 
-        CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(c);
+		CriteriaQuery<T> criteriaQuery = criteriaBuilder.createQuery(c);
 
-        Root<T> root = criteriaQuery.from(c);
+		Root<T> root = criteriaQuery.from(c);
 
 		return new CriteriaComponents<T>(criteriaBuilder, criteriaQuery, root);
 	}
