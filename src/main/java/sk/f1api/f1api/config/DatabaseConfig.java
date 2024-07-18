@@ -33,7 +33,7 @@ public class DatabaseConfig {
 
         org.hibernate.cfg.Configuration configuration = new org.hibernate.cfg.Configuration();
         configuration.setProperties(dbProperties);
-        configuration.configure("hibernate.cfg.xml"); // Optional if using hibernate.cfg.xml
+        configuration.configure("hibernate.cfg.xml");
 
         return configuration.buildSessionFactory();
     }
