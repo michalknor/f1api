@@ -10,7 +10,7 @@ import sk.f1api.f1api.scrapper.Scrapper;
 @SpringBootApplication
 public class F1ApiApplication {
 
-	static ScrapperConfig scrapperConfig;
+	private static ScrapperConfig scrapperConfig;
 
 	public static void main(String[] args) {
 		ConfigurableApplicationContext context = SpringApplication.run(F1ApiApplication.class, args);
