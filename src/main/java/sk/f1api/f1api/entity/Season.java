@@ -47,6 +47,7 @@ public class Season implements Identifiable {
 
 	private static List<Season> load(Session session, CriteriaBuilder criteriaBuilder,
 			CriteriaQuery<Season> criteriaQuery, Root<Season> root, Predicate predicate, Integer currentVersionId) {
+
 		if (currentVersionId == null) {
 			if (predicate == null) {
 				criteriaQuery.select(root);
@@ -57,8 +58,6 @@ public class Season implements Identifiable {
 
 			return session.createQuery(criteriaQuery).getResultList();
 		}
-
-		root.fetch("versions", JoinType.LEFT);
 
 		Join<Season, Version> versionJoin = root.join("versions");
 
@@ -85,7 +84,7 @@ public class Season implements Identifiable {
 				criteriaComponents.getRoot(), currentVersionId);
 	}
 
-	public static List<Season> loadByYear(Session session, int currentVersionId, int year) {
+	public static List<Season> loadByYear(Session session, Integer currentVersionId, int year) {
 		CriteriaComponents<Season> criteriaComponents = CriteriaUtil.getCriteriaComponents(session, Season.class);
 
 		return load(
