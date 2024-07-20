@@ -62,7 +62,7 @@ public class GrandPrix {
 
 	private static GrandPrix load(Session session, CriteriaBuilder criteriaBuilder,
 			CriteriaQuery<GrandPrix> criteriaQuery, Root<GrandPrix> root, Predicate predicate, Integer currentVersionId,
-			Integer year) {
+			Short year) {
 
 		Join<GrandPrix, Version> versionJoin = root.join("version");
 
@@ -89,7 +89,9 @@ public class GrandPrix {
 				criteriaQuery = criteriaQuery.where(predicate);
 			}
 
-			return session.createQuery(criteriaQuery).getResultList().get(0);
+			List<GrandPrix> resultList = session.createQuery(criteriaQuery).getResultList();
+
+			return resultList.isEmpty() ? null : resultList.get(0);
 		}
 
 		Predicate predicateVersion = criteriaBuilder.greaterThan(versionJoin.get("id"), currentVersionId);
@@ -102,10 +104,12 @@ public class GrandPrix {
 
 		criteriaQuery.select(root).where(criteriaBuilder.and(predicate)).orderBy(order);
 
-		return session.createQuery(criteriaQuery).getResultList().get(0);
+		List<GrandPrix> resultList = session.createQuery(criteriaQuery).getResultList();
+
+		return resultList.isEmpty() ? null : resultList.get(0);
 	}
 
-	public static GrandPrix loadByYearAndRound(Session session, Integer currentVersionId, int year, int round) {
+	public static GrandPrix loadByYearAndRound(Session session, Integer currentVersionId, Short year, Byte round) {
 		CriteriaComponents<GrandPrix> criteriaComponents = CriteriaUtil.getCriteriaComponents(session, GrandPrix.class);
 
 		return load(

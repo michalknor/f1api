@@ -1,7 +1,5 @@
 package sk.f1api.f1api.controller;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +36,7 @@ public class GrandPrixController {
 	})
 	@GetMapping("/grandprix")
 	public ResponseEntity<GrandPrixModel> getAllCalendars(@RequestParam(required = false) Integer currentVersion,
-			@RequestParam(required = true) int year, @RequestParam(required = true) int round) {
+			@RequestParam(required = true) Short year, @RequestParam(required = true) Byte round) {
 		try {
 			GrandPrixModel grandPrix = grandPrixService.find(currentVersion, year, round);
 

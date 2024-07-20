@@ -13,10 +13,16 @@ public class GrandPrixModel {
 	private LocationModel location;
 
 	public GrandPrixModel(GrandPrix grandPrix) {
+		if (grandPrix == null) {
+			return;
+		}
 		this.name = grandPrix.getName();
 		this.cancelled = grandPrix.isCancelled();
 
 		this.location = new LocationModel(grandPrix.getCircuit());
 	}
 
+	public GrandPrixModel() {
+		
+	}
 }

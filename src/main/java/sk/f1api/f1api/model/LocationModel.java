@@ -1,5 +1,8 @@
 package sk.f1api.f1api.model;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.Getter;
 import sk.f1api.f1api.entity.Circuit;
 
@@ -18,5 +21,16 @@ public class LocationModel {
 
 		this.country = new CountryModel(circuit.getCity());
 	}
+	
+	public LocationModel() {
+
+	}
+
+	@JsonCreator
+    public LocationModel(@JsonProperty("circuit") String circuit, @JsonProperty("city") String city, @JsonProperty("country") CountryModel country) {
+        this.circuit = circuit;
+        this.city = city;
+        this.country = country;
+    }
 	
 }
