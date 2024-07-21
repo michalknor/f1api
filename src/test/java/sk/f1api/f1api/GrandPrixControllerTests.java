@@ -27,6 +27,7 @@ class GrandPrixControllerTests {
 	@Autowired
 	private TestRestTemplate restTemplate;
 
+	@SuppressWarnings("null")
 	@Test
 	public void existingRecord() {
 		ResponseEntity<GrandPrixModel> response = getResponse(2024, 11);

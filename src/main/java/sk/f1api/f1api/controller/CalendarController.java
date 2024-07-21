@@ -1,6 +1,6 @@
 package sk.f1api.f1api.controller;
 
-import java.util.List;
+import java.util.HashMap;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -36,13 +36,40 @@ public class CalendarController {
 			@ApiResponse(responseCode = "500", content = {
 					@Content(schema = @Schema()) })
 	})
-	@GetMapping("/calendar")
-	public ResponseEntity<List<CalendarModel>> getAllCalendars(@RequestParam(required = false) Integer currentVersion,
-			@RequestParam(required = false) Integer year) {
+	@GetMapping("/calendars")
+	public ResponseEntity<HashMap<Short, CalendarModel>> getCalendars(@RequestParam(required = false) Integer currentVersion) {
 		try {
-			List<CalendarModel> calendars = calendarService.find(currentVersion, year);
+			HashMap<Short, CalendarModel> calendars = calendarService.find(currentVersion);
 
 			if (calendars.isEmpty()) {
+				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+			}
+
+			return new ResponseEntity<>(calendars, HttpStatus.OK);
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+	@Operation(summary = "Retrieve Calendar", tags = { "get", "filter" })
+	@ApiResponses({
+			@ApiResponse(responseCode = "200", content = {
+					@Content(schema = @Schema(implementation = CalendarModel.class), mediaType = "application/json") }),
+			@ApiResponse(responseCode = "204", description = "There is no Calendar", content = {
+					@Content(schema = @Schema()) }),
+			@ApiResponse(responseCode = "400", description = "Invalid Parameter", content = {
+					@Content(schema = @Schema()) }),
+			@ApiResponse(responseCode = "500", content = {
+					@Content(schema = @Schema()) })
+	})
+	@GetMapping("/calendar")
+	public ResponseEntity<CalendarModel> getCalendar(@RequestParam(required = false) Integer currentVersion,
+			@RequestParam(required = false) Short year) {
+		try {
+			CalendarModel calendars = calendarService.find(currentVersion, year);
+
+			if (calendars == null) {
 				return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 			}
 

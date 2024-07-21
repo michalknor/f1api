@@ -9,12 +9,13 @@ import sk.f1api.f1api.entity.Version;
 @Getter
 public class CalendarModel {
 
-	private int year;
-
 	private HashMap<Byte, GrandPrixModel> grandPrixes;
 
+	public CalendarModel() {
+		
+	}
+
 	public CalendarModel(Season season) {
-		this.year = season.getYear();
 		this.grandPrixes = new HashMap<>();
 		
 		if (season.getVersions() != null) {

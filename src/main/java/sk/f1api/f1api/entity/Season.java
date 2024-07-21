@@ -8,7 +8,6 @@ import jakarta.persistence.*;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Join;
-import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import lombok.Getter;
@@ -84,7 +83,7 @@ public class Season implements Identifiable {
 				criteriaComponents.getRoot(), currentVersionId);
 	}
 
-	public static List<Season> loadByYear(Session session, Integer currentVersionId, int year) {
+	public static List<Season> loadByYear(Session session, Integer currentVersionId, Short year) {
 		CriteriaComponents<Season> criteriaComponents = CriteriaUtil.getCriteriaComponents(session, Season.class);
 
 		return load(

@@ -1,53 +1,109 @@
 package sk.f1api.f1api;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpMethod;
 
-import sk.f1api.f1api.controller.CalendarController;
-import sk.f1api.f1api.entity.Season;
 import sk.f1api.f1api.model.CalendarModel;
-import sk.f1api.f1api.service.CalendarService;
+import sk.f1api.f1api.model.CountryModel;
+import sk.f1api.f1api.model.GrandPrixModel;
+import sk.f1api.f1api.model.LocationModel;
 
-import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import java.util.HashMap;
 
-import java.util.ArrayList;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
-@WebMvcTest(CalendarController.class)
-@ExtendWith(SpringExtension.class)
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@AutoConfigureWebTestClient
 class CalendarControllerTests {
 
+	@LocalServerPort
+	private int port;
+
 	@Autowired
-	private MockMvc mockMvc;
+	private TestRestTemplate restTemplate;
 
-	@MockBean
-	private CalendarService calendarService;
-
+	@SuppressWarnings("null")
 	@Test
-	void existingYear() throws Exception {
-		Integer year = 2024;
-		ArrayList<CalendarModel> calendars = new ArrayList<>();
-		var a = new Season();
-		a.setYear(year.shortValue());
-		calendars.add(new CalendarModel(a));
-		when(calendarService.find(null, year)).thenReturn(calendars);
+	public void existingRecords() {
+		ResponseEntity<HashMap<Short, CalendarModel>> response = getResponse();
+		assertEquals(HttpStatus.OK, response.getStatusCode());
 
-		mockMvc.perform(get("/api/calendar?year={year}", year)).andExpect(status().isOk());
+		CalendarModel calendarModel = response.getBody().get((short) 2024);
+
+		HashMap<Byte, GrandPrixModel> hashMapOfGrandPrixModel = calendarModel.getGrandPrixes();
+		assertEquals(24, hashMapOfGrandPrixModel.size());
+
+		GrandPrixModel grandPrixModel = hashMapOfGrandPrixModel.get((byte) 11);
+		assertEquals("Austrian", grandPrixModel.getName());
+		assertEquals(false, grandPrixModel.isCancelled());
+
+		LocationModel locationModel = grandPrixModel.getLocation();
+		assertEquals("Red Bull Ring", locationModel.getCircuit());
+		assertEquals("Spielberg", locationModel.getCity());
+
+		CountryModel countryModel = locationModel.getCountry();
+		assertEquals("Austria", countryModel.getName());
+		assertEquals("at", countryModel.getAbbreviation());
+	}
+
+	@SuppressWarnings("null")
+	@Test
+	public void existingRecord() {
+		ResponseEntity<CalendarModel> response = getResponse(2024);
+		assertEquals(HttpStatus.OK, response.getStatusCode());
+
+		CalendarModel calendarModel = response.getBody();
+
+		HashMap<Byte, GrandPrixModel> hashMapOfGrandPrixModel = calendarModel.getGrandPrixes();
+
+		GrandPrixModel grandPrixModel = hashMapOfGrandPrixModel.get((byte) 11);
+		assertEquals("Austrian", grandPrixModel.getName());
+		assertEquals(false, grandPrixModel.isCancelled());
+
+		LocationModel locationModel = grandPrixModel.getLocation();
+		assertEquals("Red Bull Ring", locationModel.getCircuit());
+		assertEquals("Spielberg", locationModel.getCity());
+
+		CountryModel countryModel = locationModel.getCountry();
+		assertEquals("Austria", countryModel.getName());
+		assertEquals("at", countryModel.getAbbreviation());
 	}
 
 	@Test
-	void nonExistingYear() throws Exception {
-		Integer year = 2024;
-		when(calendarService.find(null, year)).thenReturn(new ArrayList<CalendarModel>());
-
-		mockMvc.perform(get("/api/calendar?year={year}", year)).andExpect(status().isNoContent());
+	public void nonExistingYear() {
+		ResponseEntity<CalendarModel> response = getResponse(2023);
+		assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
 	}
 
+	@Test
+	public void overflowYear() {
+		ResponseEntity<CalendarModel> response = getResponse(327682132);
+		assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+	}
+	
+	private ResponseEntity<HashMap<Short, CalendarModel>> getResponse() {
+		return restTemplate.exchange(
+				"/api/calendars",
+				HttpMethod.GET,
+				null,
+				new ParameterizedTypeReference<HashMap<Short, CalendarModel>>() {
+				});
+	}
+
+	private ResponseEntity<CalendarModel> getResponse(Integer year) {
+		return restTemplate.exchange(
+				String.format("/api/calendar?year=%d", year),
+				HttpMethod.GET,
+				null,
+				new ParameterizedTypeReference<CalendarModel>() {
+				});
+	}
 }
