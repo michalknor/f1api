@@ -9,13 +9,13 @@ public class HibernateUtil {
 
 	private static SessionFactory sessionFactory;
 
-    @Autowired
-    public HibernateUtil(SessionFactory sessionFactory) {
-        HibernateUtil.sessionFactory = sessionFactory;
-    }
+	@Autowired
+	public HibernateUtil(SessionFactory sessionFactory) {
+		HibernateUtil.sessionFactory = sessionFactory;
+	}
 
-    public static SessionFactory getSessionFactory() {
+	public static SessionFactory getSessionFactory() {
 		return sessionFactory;
-    }
+	}
 
 }

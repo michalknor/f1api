@@ -21,16 +21,19 @@ public class LocationModel {
 
 		this.country = new CountryModel(circuit.getCity());
 	}
-	
+
 	public LocationModel() {
 
 	}
 
 	@JsonCreator
-    public LocationModel(@JsonProperty("circuit") String circuit, @JsonProperty("city") String city, @JsonProperty("country") CountryModel country) {
-        this.circuit = circuit;
-        this.city = city;
-        this.country = country;
-    }
-	
+	public LocationModel(
+			@JsonProperty("circuit") String circuit,
+			@JsonProperty("city") String city,
+			@JsonProperty("country") CountryModel country) {
+		this.circuit = circuit;
+		this.city = city;
+		this.country = country;
+	}
+
 }

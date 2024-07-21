@@ -27,7 +27,7 @@ public class Scrapper {
 		EventType.fillTable(HibernateUtil.getSessionFactory().openSession());
 
 		short year = 2024;
-		
+
 		Calendar f1Calendar = new Calendar(urlCalendar);
 
 		Wiki f1Wiki = new Wiki(urlWiki);
@@ -36,12 +36,12 @@ public class Scrapper {
 		season.setYear(year);
 
 		Version version = new Version();
-		
+
 		List<GrandPrix> grandPrixes = new ArrayList<>(f1Wiki.getNumberOfRaces());
 
 		for (int i = 1; i < f1Wiki.getNumberOfRaces() + 1; i++) {
 			GrandPrix grandPrix = new GrandPrix(version, (byte) i);
-			
+
 			f1Calendar.fillEvents(grandPrix, i);
 			f1Wiki.fillGrandPrix(grandPrix, i);
 			f1Wiki.fillCircuit(grandPrix.getCircuit(), i);
@@ -60,7 +60,7 @@ public class Scrapper {
 		season.setVersions(new ArrayList<>(Arrays.asList(version)));
 
 		System.out.println(season);
-		
+
 		version.save(HibernateUtil.getSessionFactory().openSession());
 	}
 

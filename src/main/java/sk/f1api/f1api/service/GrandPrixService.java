@@ -24,13 +24,17 @@ public class GrandPrixService {
 			grandPrixModel = null == null ? null : new GrandPrixModel(grandPrix);
 			return grandPrixModel;
 		}
-		
+
 		grandPrixModel = new GrandPrixModel(grandPrix);
 		return grandPrixModel;
 	}
 
 	private GrandPrix loadAll(Integer currentVersion, Short year, Byte round) {
-		return GrandPrix.loadByYearAndRound(HibernateUtil.getSessionFactory().openSession(), currentVersion, year, round);
+		return GrandPrix.loadByYearAndRound(
+				HibernateUtil.getSessionFactory().openSession(),
+				currentVersion,
+				year,
+				round);
 	}
 
 }

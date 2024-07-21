@@ -17,20 +17,19 @@ import sk.f1api.f1api.model.LocationModel;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureWebTestClient
 class GrandPrixControllerTests {
-	
+
 	@LocalServerPort
-    private int port;
+	private int port;
 
 	@Autowired
-    private TestRestTemplate restTemplate;
+	private TestRestTemplate restTemplate;
 
 	@Test
-    public void existingRecord() {
-        ResponseEntity<GrandPrixModel> response = getResponse(2024, 11);
+	public void existingRecord() {
+		ResponseEntity<GrandPrixModel> response = getResponse(2024, 11);
 		assertEquals(HttpStatus.OK, response.getStatusCode());
 
 		GrandPrixModel grandPrixModel = response.getBody();
@@ -44,34 +43,35 @@ class GrandPrixControllerTests {
 		CountryModel countryModel = locationModel.getCountry();
 		assertEquals("Austria", countryModel.getName());
 		assertEquals("at", countryModel.getAbbreviation());
-    }
+	}
 
 	@Test
-    public void nonExistingYear() {
-        ResponseEntity<GrandPrixModel> response = getResponse(2022, 11);
+	public void nonExistingYear() {
+		ResponseEntity<GrandPrixModel> response = getResponse(2022, 11);
 
 		assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-    }
+	}
 
 	@Test
-    public void nonExistingRound() {
-        ResponseEntity<GrandPrixModel> response = getResponse(2024, 25);
+	public void nonExistingRound() {
+		ResponseEntity<GrandPrixModel> response = getResponse(2024, 25);
 
 		assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-    }
+	}
 
 	@Test
-    public void overflowYear() {
-        ResponseEntity<GrandPrixModel> response = getResponse(327682132, 25);
+	public void overflowYear() {
+		ResponseEntity<GrandPrixModel> response = getResponse(327682132, 25);
 
 		assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
-    }
+	}
 
 	private ResponseEntity<GrandPrixModel> getResponse(Integer year, Integer round) {
 		return restTemplate.exchange(
-			String.format("/api/grandprix?year=%d&round=%d", year, round),
-			HttpMethod.GET,
-			null,
-			new ParameterizedTypeReference<GrandPrixModel>() {});
+				String.format("/api/grandprix?year=%d&round=%d", year, round),
+				HttpMethod.GET,
+				null,
+				new ParameterizedTypeReference<GrandPrixModel>() {
+				});
 	}
 }

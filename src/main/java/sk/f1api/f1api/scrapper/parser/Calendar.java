@@ -61,7 +61,6 @@ public class Calendar extends AbstractParser {
 			event.setTimeFrom(LocalDateTime.parse("2024 " + eventInfo.get(1).text() + " " + times.first().text(),
 					dateTimeFormatterFrom));
 
-			System.out.println(event.getTimeFrom());
 			if (times.size() == 2) {
 				event.setTimeTo(LocalDateTime.parse("2024 " + eventInfo.get(1).text() + " " + times.get(1).text(),
 						dateTimeFormatterTo));
